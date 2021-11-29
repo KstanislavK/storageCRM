@@ -1,9 +1,14 @@
 {% extends 'layout/base.html' %}
 {% load static %}
-
+{% block title %}{{ title }}{% endblock %}
 {% block content %}
-Главная страница
-<div class="container">
-    <a href="{% url 'todoapp:index' %}">Задачи</a>
+<div class="container" id="todolist">
+    <h4>Последние задачи</h4>
+    <a href="{% url 'todoapp:index' %}">Перейти в раздел</a>
 </div>
 {% endblock %}
+<div class="container d-flex flex-wrap justify-content-around">
+    {% for object in todo_objects %}
+
+    {% endfor %}
+</div>
