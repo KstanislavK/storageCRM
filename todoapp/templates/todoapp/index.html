@@ -10,7 +10,7 @@
     <div class="card" style="width: 18rem;">
         <div class="card-body">
             <h5 class="card-title">
-                <a href="#" class="card-link"
+                <a href="{% url 'todoapp:update' item.pk %}" class="card-link"
                 style="{% if not item.is_active %}opacity: .5; text-decoration: line-through; {% endif %}">{{ item.title }}</a>
             </h5>
             <h6 class="card-subtitle mb-2 text-muted" style="{% if not item.is_active %}opacity: .5; text-decoration: line-through; {% endif %}">{{ item.date }}, USER</h6>
