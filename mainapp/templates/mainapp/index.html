@@ -6,9 +6,7 @@
     <h4>Последние задачи</h4>
     <a href="{% url 'todoapp:index' %}">Перейти в раздел</a>
 </div>
+<div class="container d-flex flex-wrap justify-content-center">
+    {% include 'todoapp/includes/inc_todo_card.html' %}
 {% endblock %}
-<div class="container d-flex flex-wrap justify-content-around">
-    {% for object in todo_objects %}
-
-    {% endfor %}
 </div>
