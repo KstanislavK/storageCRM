@@ -22,6 +22,7 @@ class TodoListView(ListView):
 class TodoCreateView(CreateView):
     model = ToDoList
     template_name = 'todoapp/todo_crud_form.html'
+    context_object_name = 'todo_objects'
     success_url = reverse_lazy('todoapp:index')
     fields = '__all__'
 

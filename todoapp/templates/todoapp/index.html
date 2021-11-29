@@ -6,22 +6,7 @@
         <div class="div"><h3>Заметки</h3></div>
         <div class="div"><a href="{% url 'todoapp:create' %}">Добавить</a></div>
     </div>
-    {% for item in objects %}
-    <div class="card" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">
-                <a href="{% url 'todoapp:update' item.pk %}" class="card-link"
-                style="{% if not item.is_active %}opacity: .5; text-decoration: line-through; {% endif %}">{{ item.title }}</a>
-            </h5>
-            <h6 class="card-subtitle mb-2 text-muted" style="{% if not item.is_active %}opacity: .5; text-decoration: line-through; {% endif %}">{{ item.date }}, USER</h6>
-            <p class="card-text" style="{% if not item.is_active %}opacity: .5; text-decoration: line-through;{% endif %}">{{ item.text }}</p>
-            {% if item.is_active %}
-                <a href="{% url 'todoapp:complete' item.pk %}" class="card-link">Завершить</a>
-            {% else %}
-                <a href="{% url 'todoapp:complete' item.pk %}" class="card-link">Восстановить</a>
-            {% endif %}
-            <a href="{% url 'todoapp:delete' item.pk %}" class="card-link">Удалить</a>
-        </div>
-    </div>
+    {% for object in todo_objects %}
+    {% include 'includes/inc_todo_card.html' %}
     {% endfor %}
 </div>
