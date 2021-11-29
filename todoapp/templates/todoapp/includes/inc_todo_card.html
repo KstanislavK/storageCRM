@@ -1,0 +1,21 @@
+<div class="card" style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title">
+            <a href="{% url 'todoapp:update' object.pk %}" class="card-link"
+               style="{% if not object.is_active %}opacity: .5; text-decoration: line-through; {% endif %}">
+                {{ object.title}}
+            </a>
+        </h5>
+        <h6 class="card-subtitle mb-2 text-muted"
+            style="{% if not item.is_active %}opacity: .5; text-decoration: line-through; {% endif %}">{{ object.date }},
+            USER</h6>
+        <p class="card-text" style="{% if not item.is_active %}opacity: .5; text-decoration: line-through;{% endif %}">
+            {{ object.text }}</p>
+        {% if object.is_active %}
+        <a href="{% url 'todoapp:complete' object.pk %}" class="card-link">Завершить</a>
+        {% else %}
+        <a href="{% url 'todoapp:complete' object.pk %}" class="card-link">Восстановить</a>
+        {% endif %}
+        <a href="{% url 'todoapp:delete' object.pk %}" class="card-link">Удалить</a>
+    </div>
+</div>
