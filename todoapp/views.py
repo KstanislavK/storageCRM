@@ -9,7 +9,7 @@ from .models import ToDoList
 class TodoListView(ListView):
     model = ToDoList
     template_name = 'todoapp/index.html'
-    context_object_name = 'objects'
+    context_object_name = 'todo_objects'
 
     def get_queryset(self):
         return ToDoList.objects.all()
