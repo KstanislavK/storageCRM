@@ -30,17 +30,22 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
+DEFAULT_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+]
 
+ADDED_APPS = [
     'todoapp',
     'mainapp',
+    'partnersapp',
 ]
+
+INSTALLED_APPS = DEFAULT_APPS + ADDED_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

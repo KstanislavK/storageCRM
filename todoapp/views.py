@@ -16,6 +16,7 @@ class TodoListView(ListView):
 
     def get_context_data(self):
         context = super(TodoListView, self).get_context_data()
+        context['title'] = 'Задачи'
         return context
 
 
