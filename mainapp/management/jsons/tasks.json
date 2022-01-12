@@ -1,16 +1,18 @@
 [
   {
-    "date": ,
+    "date": "12.01.2022",
     "user_posted": "admin",
     "title": "Валюта",
     "text": "сделать модуль валюты (стоимость доллара), в шапке на всех страницах",
-    "is_active": "True"
+    "is_active": "True",
+    "slug": "valuta"
   },
   {
-    "date": ,
+    "date": "12.01.2022",
     "user_posted": "admin",
     "title": "Погода",
     "text": "Сделать модуль погоды, в шапке на всех страницах",
-    "is_active": "True"
+    "is_active": "True",
+    "slug": "pogoda"
   }
 ]

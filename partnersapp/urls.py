@@ -7,7 +7,7 @@ app_name = 'partnersapp'
 urlpatterns = [
     path('', PartnersListView.as_view(), name="index"),
     path('create/', PartnersCreateView.as_view(), name='create'),
-    path('complete/<int:pk>', partner_active, name='active'),
-    path('update/<int:pk>', PartnersUpdateView.as_view(), name='update'),
+    path('delete/<slug:slug>', partner_active, name='active'),
+    path('update/<slug:slug>', PartnersUpdateView.as_view(), name='update'),
 ]
 

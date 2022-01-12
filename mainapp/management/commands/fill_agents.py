@@ -9,7 +9,7 @@ JSON_PATH = 'mainapp/management/jsons'
 
 
 def load_from_json(file_name):
-    with open(os.path.join(JSON_PATH, file_name + '.json'), mode='r', encoding='itf-8') as infile:
+    with open(os.path.join(JSON_PATH, file_name + '.json'), mode='r', encoding='utf-8') as infile:
         return json.load(infile)
 
 

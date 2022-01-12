@@ -1,6 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
+from django.utils.text import slugify
 from django.views.generic import ListView, CreateView, UpdateView
 
 from .forms import PartnersForm
@@ -25,7 +26,6 @@ class PartnersCreateView(CreateView):
     model = PartnersList
     template_name = 'partnersapp/partners_create_form.html'
     context_object_name = 'partners_objects'
-    success_url = reverse_lazy('partnersapp:index')
     form_class = PartnersForm
 
     def get_context_data(self, **kwargs):
@@ -43,12 +43,12 @@ class PartnersUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(PartnersUpdateView, self).get_context_data(**kwargs)
         context['title'] = 'Редактирования контрагента'
-        context['obj'] = PartnersList.objects.get(pk=self.kwargs['pk'])
+        context['obj'] = PartnersList.objects.get(slug=self.kwargs['slug'])
         return context
 
 
-def partner_active(request, pk):
-    partner = get_object_or_404(PartnersList, pk=pk)
+def partner_active(request, slug):
+    partner = get_object_or_404(PartnersList, slug=slug)
 
     if request.method == 'GET':
         if partner.is_active:
