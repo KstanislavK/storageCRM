@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Визуал ООО",
+    "partner_city": "Москва",
+    "contact_person": "Денис",
+    "contact_phone": "+79997775588",
+    "contact_email": "sv@visual.local",
+    "is_active": "True"
+  },
+  {
+    "name": "Соболев ИП",
+    "partner_city": "Иваново",
+    "contact_person": "Семен",
+    "contact_phone": "+79025558877",
+    "contact_email": "semen@sobol.local",
+    "is_active": "True"
+  },
+  {
+    "name": "ТК Профит ООО",
+    "partner_city": "Казань",
+    "contact_person": "Луиза",
+    "contact_phone": "+78887755566",
+    "contact_email": "profit@tk.local",
+    "is_active": "True"
+  }
+]
