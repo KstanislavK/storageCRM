@@ -4,7 +4,7 @@
     "user_posted": "admin",
     "title": "Валюта",
     "text": "сделать модуль валюты (стоимость доллара), в шапке на всех страницах",
-    "is_active": "True",
+    "is_active": "False",
     "slug": "valuta"
   },
   {
@@ -12,7 +12,15 @@
     "user_posted": "admin",
     "title": "Погода",
     "text": "Сделать модуль погоды, в шапке на всех страницах",
-    "is_active": "True",
+    "is_active": "False",
     "slug": "pogoda"
+  },
+  {
+    "date": "12.01.2022",
+    "user_posted": "admin",
+    "title": "СКЛАД",
+    "text": "Переделать БД, сделать верные View",
+    "is_active": "True",
+    "slug": "sklad"
   }
 ]

@@ -2,6 +2,7 @@
 {% load static %}
 {% block content %}
 <div class="container">
+    <a href="{% url 'partnersapp:index' %}" class="link-dark"><i class="bi bi-arrow-left"></i>Назад</a>
     <div class="card mb-4">
         <div class="card-header">{{ title }} <strong>"{{obj.name}}"</strong>
         </div>

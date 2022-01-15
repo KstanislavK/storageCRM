@@ -43,6 +43,7 @@ ADDED_APPS = [
     'todoapp',
     'mainapp',
     'partnersapp',
+    'storageapp',
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + ADDED_APPS

@@ -1,0 +1,12 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block title %}{{ object.title }}{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>{{ object.title }}</h2>
+    <p>Название: {{ object.name }}</p>
+    <p>Категория: {{ object.category }}</p>
+    <p>Количество: {{ object.quantity }}</p>
+    <p>Доступные партии: {{ object.batch }}</p>
+</div>
+{% endblock %}

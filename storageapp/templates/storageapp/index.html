@@ -4,29 +4,35 @@
 {% block content %}
 <div class="container d-flex justify-content-between">
     <div><h3>{{title}}</h3></div>
-    <div><a href="{% url 'partnersapp:create' %}" class="btn btn-outline-dark">
+    <div><a href="#" class="btn btn-outline-dark">
         <i class="bi bi-plus-lg"></i> Добавить
     </a></div>
+</div>
+<div class="container">
+    <a href="{% url 'storageapp:index' %}" class="link-dark">Все</a>
+    {% for item in category_links %}
+        <a href="{% url 'storageapp:by_category' item.slug %}" class="link-dark">{{item.name}}</a>
+    {% endfor %}
 </div>
 <div class="container">
     <table class="table table-hover">
         <thead>
         <tr>
             <th scope="col">ID</th>
+            <th scope="col">Категория</th>
             <th scope="col">Название</th>
-            <th scope="col">Город</th>
-            <th scope="col">Телефон</th>
-            <th scope="col">Контакт</th>
+            <th scope="col">Партия</th>
+            <th scope="col">Количество</th>
         </tr>
         </thead>
         <tbody>
-        {% for item in partners_objects %}
+        {% for item in objects %}
         <tr>
             <th scope="row">{{ item.pk }}</th>
-            <td><a href="{% url 'partnersapp:update' item.pk %}" class="link-dark">{{ item.name }}</a></td>
-            <td>{{ item.partner_city }}</td>
-            <td>{{ item.contact_phone }}</td>
-            <td>{{ item.contact_person }}</td>
+            <td>{{ item.category }}</td>
+            <td><a href="{% url 'storageapp:product_detail' item.slug %}" class="link-dark">{{ item.name }}</a></td>
+            <td>{{ item.batch }}</td>
+            <td>{{ item.quantity }}</td>
         </tr>
         {% endfor %}
         </tbody>

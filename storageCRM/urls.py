@@ -20,5 +20,6 @@ urlpatterns = [
     path('admin/', admin.site.urls, name='admin_panel'),
     path('todo/', include('todoapp.urls', namespace='todoapp')),
     path('', include('mainapp.urls', namespace='mainapp')),
-    path('partners/', include('partnersapp.urls', namespace='partnersapp'))
+    path('partners/', include('partnersapp.urls', namespace='partnersapp')),
+    path('storage/', include('storageapp.urls', namespace='storageapp'))
 ]
