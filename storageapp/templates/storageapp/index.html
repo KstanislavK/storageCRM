@@ -14,25 +14,24 @@
         <a href="{% url 'storageapp:by_category' item.slug %}" class="link-dark">{{item.name}}</a>
     {% endfor %}
 </div>
+
 <div class="container">
     <table class="table table-hover">
         <thead>
         <tr>
-            <th scope="col">ID</th>
+            <th scope="col">Артикул</th>
             <th scope="col">Категория</th>
             <th scope="col">Название</th>
-            <th scope="col">Партия</th>
             <th scope="col">Количество</th>
         </tr>
         </thead>
         <tbody>
         {% for item in objects %}
         <tr>
-            <th scope="row">{{ item.pk }}</th>
+            <th scope="row">{{ item.part_number }}</th>
             <td>{{ item.category }}</td>
-            <td><a href="{% url 'storageapp:product_detail' item.slug %}" class="link-dark">{{ item.name }}</a></td>
-            <td>{{ item.batch }}</td>
-            <td>{{ item.quantity }}</td>
+            <td><a href="{% url 'storageapp:product_detail' item.get_slug %}" class="link-dark">{{ item.name }}</a></td>
+            <td>{{ item.get_quantity }}</td>
         </tr>
         {% endfor %}
         </tbody>

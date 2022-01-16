@@ -13,6 +13,7 @@ class PartnersList(models.Model):
     slug = models.SlugField(verbose_name='URL', max_length=255, unique=True)
 
     class Meta:
+        db_table = 'partnerslist'
         verbose_name = 'Контрагент'
         verbose_name_plural = 'Контрагенты'
         ordering = ['name']

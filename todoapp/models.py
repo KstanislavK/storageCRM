@@ -12,6 +12,7 @@ class ToDoList(models.Model):
     slug = models.SlugField(verbose_name='URL', unique=True, max_length=255)
 
     class Meta:
+        db_table = 'todolist'
         ordering = ('-is_active', '-date',)
         verbose_name = 'Задача'
         verbose_name_plural = 'Задачи'
