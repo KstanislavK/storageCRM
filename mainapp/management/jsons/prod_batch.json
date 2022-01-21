@@ -2,26 +2,31 @@
   {
     "name": "old",
     "delivery_date": "2020-01-01",
+    "products_json": "",
     "slug": "old"
   },
   {
     "name": "1220",
     "delivery_date": "2020-12-01",
+    "products_json": "",
     "slug": "1220"
   },
   {
     "name": "0321",
     "delivery_date": "2021-03-15",
+    "products_json": "",
     "slug": "0321"
   },
   {
     "name": "0621",
     "delivery_date": "2021-06-15",
+    "products_json": "",
     "slug": "0621"
   },
   {
     "name": "0122",
     "delivery_date": "2022-01-02",
+    "products_json": "",
     "slug": "0122"
   }
 ]

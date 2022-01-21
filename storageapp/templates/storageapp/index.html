@@ -3,15 +3,19 @@
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
 <div class="container d-flex justify-content-between">
-    <div><h3>{{title}}</h3></div>
+    <div>
+        <h3>{{title}}</h3>
+    </div>
     <div><a href="#" class="btn btn-outline-dark">
         <i class="bi bi-plus-lg"></i> Добавить
     </a></div>
 </div>
 <div class="container">
-    <a href="{% url 'storageapp:index' %}" class="link-dark">Все</a>
+    <a href="{% url 'storageapp:index' %}" class="link-dark">Все({{ products_count }})</a>
     {% for item in category_links %}
-        <a href="{% url 'storageapp:by_category' item.slug %}" class="link-dark">{{item.name}}</a>
+        <a href="{% url 'storageapp:by_category' item.slug %}" class="link-dark">
+            {{item.name}}({{ item.get_products_amount_by_category}})
+        </a>
     {% endfor %}
 </div>
 
@@ -19,22 +23,26 @@
     <table class="table table-hover">
         <thead>
         <tr>
-            <th scope="col">Артикул</th>
-            <th scope="col">Категория</th>
             <th scope="col">Название</th>
             <th scope="col">Количество</th>
+            <th scope="col">Артикул</th>
+            <th scope="col">Категория</th>
         </tr>
         </thead>
         <tbody>
         {% for item in objects %}
         <tr>
-            <th scope="row">{{ item.part_number }}</th>
-            <td>{{ item.category }}</td>
-            <td><a href="{% url 'storageapp:product_detail' item.get_slug %}" class="link-dark">{{ item.name }}</a></td>
+            <th scope="row">
+                <a href="{% url 'storageapp:product_detail' item.slug %}" class="link-dark">{{ item.name }}</a>
+            </th>
             <td>{{ item.get_quantity }}</td>
+            <td>{{ item.part_number }}</td>
+            <td>{{ item.category }}</td>
         </tr>
         {% endfor %}
         </tbody>
     </table>
+    <div>
+    </div>
 </div>
 {% endblock %}

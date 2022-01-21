@@ -3,7 +3,7 @@ import json
 
 from django.core.management.base import BaseCommand
 
-from storageapp.models import Category
+from storageapp.models import CategoryList
 
 JSON_PATH = 'mainapp/management/jsons'
 
@@ -17,7 +17,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         cats = load_from_json('prod_category')
 
-        Category.objects.all().delete()
+        CategoryList.objects.all().delete()
         for cat in cats:
-            new_cat = Category(**cat)
+            new_cat = CategoryList(**cat)
             new_cat.save()

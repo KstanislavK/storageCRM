@@ -1,36 +1,35 @@
 from django.contrib import admin
 
-from .models import Category, Product, Batch, Nomenclature
+from .models import CategoryList, BatchList, MakerList, ProductList
 
 
-@admin.register(Batch)
-class BatchAdmin(admin.ModelAdmin):
+@admin.register(BatchList)
+class BatchListAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     list_display = ('id', 'name', 'delivery_date', 'slug')
     list_display_links = ('id', 'delivery_date', 'name')
     search_fields = ('id', 'name', 'slug')
 
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+@admin.register(CategoryList)
+class CategoryListAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name', )}
     list_display = ('id', 'name', 'slug')
     list_display_links = ('id', 'name')
     search_fields = ('id', 'name', 'slug')
 
 
-@admin.register(Nomenclature)
-class NomenclatureAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'category','part_number')
-    list_display_links = ('id', 'name', 'part_number')
-    search_fields = ('id', 'name', 'part_number')
-
-
-@admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
-    prepopulated_fields = {'slug': ('name', 'batch')}
-    list_display = ('id', 'name', 'quantity', 'slug')
+@admin.register(MakerList)
+class CategoryListAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('name', )}
+    list_display = ('id', 'name', 'country', 'slug')
     list_display_links = ('id', 'name')
-    search_fields = ('id', 'name', 'slug', 'category')
+    search_fields = ('id', 'name', 'country', 'slug')
 
 
+@admin.register(ProductList)
+class ProductListAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('name', 'batch')}
+    list_display = ('id', 'part_number', 'name', 'batch', 'amount', 'slug')
+    list_display_links = ('id', 'part_number', 'name')
+    search_fields = ('id', 'part_number', 'name', 'batch', 'slug', 'category')
