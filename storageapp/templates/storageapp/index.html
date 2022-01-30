@@ -6,9 +6,14 @@
     <div>
         <h3>{{title}}</h3>
     </div>
-    <div><a href="#" class="btn btn-outline-dark">
-        <i class="bi bi-plus-lg"></i> Добавить
-    </a></div>
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <a href="{% url 'storageapp:nomen_create' %}" class="btn btn-outline-dark">
+            <i class="bi bi-plus-lg"></i> Добавить Номен
+        </a>
+        <a href="{% url 'storageapp:product_create' %}" class="btn btn-outline-dark">
+            <i class="bi bi-plus-lg"></i>  Добавить Товар
+        </a>
+    </div>
 </div>
 <div class="container">
     <a href="{% url 'storageapp:index' %}" class="link-dark">Все({{ products_count }})</a>
@@ -33,7 +38,7 @@
         {% for item in objects %}
         <tr>
             <th scope="row">
-                <a href="{% url 'storageapp:product_detail' item.slug %}" class="link-dark">{{ item.name }}</a>
+                <a href="{% url 'storageapp:nomen_detail' item.slug %}" class="link-dark">{{ item.name }}</a>
             </th>
             <td>{{ item.get_quantity }}</td>
             <td>{{ item.part_number }}</td>

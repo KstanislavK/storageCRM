@@ -1,6 +1,14 @@
 from django.contrib import admin
 
-from .models import CategoryList, BatchList, MakerList, ProductList
+from .models import CategoryList, BatchList, MakerList, ProductList, NomenList
+
+
+@admin.register(NomenList)
+class NomenListAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('name',)}
+    list_display = ('id', 'part_number', 'name', 'slug')
+    list_display_links = ('id', 'part_number', 'name')
+    search_fields = ('id', 'part_number', 'name', 'slug', 'category')
 
 
 @admin.register(BatchList)
@@ -30,6 +38,6 @@ class CategoryListAdmin(admin.ModelAdmin):
 @admin.register(ProductList)
 class ProductListAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name', 'batch')}
-    list_display = ('id', 'part_number', 'name', 'batch', 'amount', 'slug')
-    list_display_links = ('id', 'part_number', 'name')
-    search_fields = ('id', 'part_number', 'name', 'batch', 'slug', 'category')
+    list_display = ('id', 'name', 'batch', 'amount', 'slug')
+    list_display_links = ('id', 'name')
+    search_fields = ('id', 'name', 'batch', 'slug')

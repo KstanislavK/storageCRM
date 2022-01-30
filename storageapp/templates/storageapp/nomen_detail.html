@@ -8,7 +8,7 @@
     <h2>{{ title }} {{ object.name }}</h2>
     <p>Артикул: {{ object.part_number }}</p>
     <p>Категория: {{ object.category }}</p>
-    <p>Количество: <strong>{{object.get_product_sum }}</strong></p>
+    <p>Количество: <strong>{{object.get_quantity }}</strong></p>
     <p>Доступные партии:</p>
     <div style="max-width: 40%;">
         <table class="table table-sm" style="text-align: center;">
@@ -26,7 +26,9 @@
             </tr>
             {% endfor %}
         </table>
+
     </div>
     <p>Описание: {{object.description}}</p>
+    <a href="{% url 'storageapp:nomen_update' object.slug %}" class="link-dark">Редактировать</a>
 </div>
 {% endblock %}
