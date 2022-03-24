@@ -4,8 +4,12 @@ import requests
 def get_dollar_price(request):
     course = requests.get('https://www.cbr-xml-daily.ru/daily_json.js').json()
     data = {
-        'value_now': course['Valute']['USD']['Value'],
-        'value_prev': course['Valute']['USD']['Previous']
+        'd_value_now': course['Valute']['USD']['Value'],
+        'd_value_prev': course['Valute']['USD']['Previous'],
+        'yu_value_now': course['Valute']['CNY']['Value'],
+        'yu_value_prev': course['Valute']['CNY']['Previous'],
+        'kr_value_now': course['Valute']['KRW']['Value'],
+        'kr_value_prev': course['Valute']['KRW']['Previous']
     }
     return data
 

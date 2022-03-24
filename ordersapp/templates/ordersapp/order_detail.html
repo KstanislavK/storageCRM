@@ -1,0 +1,61 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block title %} {{object.pk}} | {{object.created_at|date:"d.m.Y"}} | {{object.partner.name}} {% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <p>
+        <a href="{% url 'ordersapp:index' %}" class="link-dark"><i class="bi bi-arrow-left"></i>К заказам</a>
+    </p>
+    <h2>{{object.partner.partner_city}}, {{object.partner.name}}</h2>
+    <p><b>Заказ № {{ object.pk }}</b></p>
+    <p><b>Создан:</b> {{object.created_at}}, {{object.user_creator.first_name}}</p>
+    <p><b>ТК / Адресс:</b>
+        {% if object.tk%}{{ object.tk.name }}
+        {% elif object.self_pickup%}Самовывоз
+        {% elif object.partner.address%}{{ object.partner.address }}
+        {%endif%}
+    </p>
+    <table class="table caption-top">
+        <caption>Список товаров:</caption>
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Количество</th>
+                <th><a href="{% url 'ordersapp:order_product_create' object.pk %}" class="link-primary">Добавить</a></th>
+            </tr>
+        </thead>
+        <tbody>
+        {%for item in object.get_order_products_list%}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>
+                    {{ item.amount }}
+                </td>
+                <td><a href="{% url 'ordersapp:order_product_delete' item.pk %}" class="link-primary">Удалить</a></td>
+            </tr>
+        {%endfor%}
+        </tbody>
+    </table>
+    <p><b>Комментарий:</b> {{ object.comment }}</p>
+</div>
+<div class="container d-flex justify-content-between">
+    {%if object.payed%}
+        <p>Оплачен |
+        <a href="{% url 'ordersapp:order_payed' object.pk %}" style="font-size: 12px; text-decoration: none; border-bottom: 1px dashed;">Отменить
+        </a></p>
+    {% else %}
+        <a href="{% url 'ordersapp:order_payed' object.pk %}" class="btn btn-outline-warning mb-3">Оплатили</a>
+    {%endif%}
+    {%if object.shipped%}
+        <p>Отгружено: {{ object.shipped_date|date:"d.m.Y" }} |
+        <a href="{#% url 'shipment:shipped' object.pk %}" style="font-size: 12px; text-decoration: none; border-bottom: 1px dashed;">Посмотреть</a></p>
+    {% else %}
+        <a href="{#% url 'shipment:shiped' object.pk %}" class="btn btn-outline-success mb-3">Отгрузить</a>
+    {%endif%}
+    <a href="{% url 'ordersapp:order_update' object.pk %}" class="btn btn-outline-primary mb-3">Редактировать</a>
+    <a href="{% url 'ordersapp:order_delete' object.pk %}" class="btn btn-outline-danger mb-3">Удалить</a>
+</div>
+
+{% endblock %}

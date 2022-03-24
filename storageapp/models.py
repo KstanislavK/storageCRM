@@ -147,7 +147,7 @@ class ProductList(models.Model):
             return dict_1[key]
 
     @staticmethod
-    def get_all_products_amount(self):
+    def get_all_products_amount():
         dict_1 = ProductList.objects.filter(is_active=True).aggregate(Sum('amount'))
         for key in dict_1:
             return dict_1[key]

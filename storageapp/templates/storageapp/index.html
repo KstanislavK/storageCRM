@@ -16,6 +16,20 @@
     </div>
 </div>
 <div class="container">
+    <div class="col-6">
+        <form action="/storage/" method="post" class="col-auto mb-3">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+                <input type="text" class="form-control"
+                       placeholder="Введите номер название или артикул товара..." name="data_for_search">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" value="OK">Поиск</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="container">
     <a href="{% url 'storageapp:index' %}" class="link-dark">Все({{ products_count }})</a>
     {% for item in category_links %}
         <a href="{% url 'storageapp:by_category' item.slug %}" class="link-dark">
