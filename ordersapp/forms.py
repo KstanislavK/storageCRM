@@ -3,6 +3,10 @@ from django import forms
 from .models import OrderList, OrderProductsList
 
 
+class SearchForm(forms.Form):
+    pass
+
+
 class NewOrderForm(forms.ModelForm):
     class Meta:
         model = OrderList
@@ -24,8 +28,15 @@ class UpdateOrderForm(forms.ModelForm):
 class OrderProductForm(forms.ModelForm):
     class Meta:
         model = OrderProductsList
+        exclude = ('order', 'batch')
+
+
+class OrderProductUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = OrderProductsList
         exclude = ('order',)
+        widgets = {
+            'batch': forms.Select()
+        }
 
-
-class SearchForm(forms.Form):
-    pass

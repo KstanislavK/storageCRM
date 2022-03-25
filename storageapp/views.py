@@ -7,19 +7,6 @@ from .forms import ProductForm, NomenForm, SearchForm
 from .models import ProductList, CategoryList, NomenList
 
 
-# class ProductListView(ListView):
-#     model = NomenList
-#     template_name = 'storageapp/index.html'
-#     context_object_name = 'objects'
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(ProductListView, self).get_context_data(**kwargs)
-#         context['title'] = 'Товары'
-#         context['category_links'] = CategoryList.objects.all()
-#         context['products_count'] = ProductList.get_all_products_amount(self)
-#         return context
-
-
 def product_list(request):
     objects = NomenList.objects.all()
     if request.method == 'POST':

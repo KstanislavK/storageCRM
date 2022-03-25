@@ -37,7 +37,6 @@ class CategoryList(models.Model):
 class BatchList(models.Model):
     name = models.CharField(verbose_name='Название', max_length=64)
     delivery_date = models.DateField(verbose_name='Дата разгрузки')
-    products_json = models.JSONField(verbose_name='Поступившие товары', blank=True)
     slug = models.SlugField(verbose_name='URL', max_length=255, unique=True)
 
     class Meta:
@@ -119,7 +118,7 @@ class NomenList(models.Model):
 class ProductList(models.Model):
     name = models.ForeignKey(NomenList, verbose_name='Название',
                              on_delete=models.CASCADE, max_length=128, related_name='product')
-    batch = models.ForeignKey(BatchList, verbose_name='Партия', on_delete=models.CASCADE, related_name='products')
+    batch = models.ForeignKey(BatchList, verbose_name='Партия', on_delete=models.CASCADE, related_name='product_b')
     amount = models.IntegerField(verbose_name='Количество')
     is_active = models.BooleanField(verbose_name='Активный', default=True)
     slug = models.SlugField(verbose_name='URL', max_length=255, unique=True)
@@ -131,7 +130,7 @@ class ProductList(models.Model):
         ordering = ['name', 'batch']
 
     def __str__(self):
-        return self.name.name or ''
+        return f'{self.name.name} | {self.batch} ' or ''
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -158,5 +157,3 @@ class ProductList(models.Model):
         for item in prods:
             prods_by_batch[item.batch] = item.amount
         return prods_by_batch
-
-

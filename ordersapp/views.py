@@ -1,9 +1,12 @@
+from datetime import datetime
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 
-from .forms import SearchForm, NewOrderForm, UpdateOrderForm, OrderProductForm
+from storageapp.models import BatchList
+from .forms import SearchForm, NewOrderForm, UpdateOrderForm, OrderProductForm, OrderProductUpdateForm
 from .models import OrderList, OrderProductsList
 
 
@@ -17,12 +20,23 @@ def get_order_list(request):
             data_for_search = form.data['data_for_search']
 
             if data_for_search.isdigit():
-                search_results = list(OrderList.objects.filter(pk=int(data_for_search)))
-            search_results = set(list(OrderList.objects.filter(partner__partner_city__contains=data_for_search)) +
-                                 list(OrderList.objects.filter(partner__name__contains=data_for_search)) +
-                                 list(OrderList.objects.filter(partner__address__contains=data_for_search)) +
-                                 list(OrderList.objects.filter(tk__name__contains=data_for_search)) +
-                                 search_results)
+                search_results = list(
+                    OrderList.objects.filter(
+                        pk=int(data_for_search)))
+            search_results = set(
+                list(
+                    OrderList.objects.filter(
+                        partner__partner_city__contains=data_for_search)) +
+                list(
+                    OrderList.objects.filter(
+                        partner__name__contains=data_for_search)) +
+                list(
+                    OrderList.objects.filter(
+                        partner__address__contains=data_for_search)) +
+                list(
+                    OrderList.objects.filter(
+                        tk__name__contains=data_for_search)) +
+                search_results)
             context = {
                 'objects': search_results,
                 'form': form,
@@ -96,7 +110,28 @@ def set_payed(request, pk):
             order.payed = True
         order.save()
 
-        return HttpResponseRedirect(reverse('ordersapp:order_detail', kwargs={'pk': pk}))
+        return HttpResponseRedirect(
+            reverse(
+                'ordersapp:order_detail',
+                kwargs={
+                    'pk': pk}))
+
+
+def set_shipped(request, pk):
+    order = get_object_or_404(OrderList, pk=pk)
+    if request.method == 'GET':
+        if order.shipped:
+            order.shipped = False
+        else:
+            order.shipped = True
+            order.shipped_date = datetime.now()
+        order.save()
+
+        return HttpResponseRedirect(
+            reverse(
+                'ordersapp:order_detail',
+                kwargs={
+                    'pk': pk}))
 
 
 class OrderProductCreate(CreateView):
@@ -110,7 +145,31 @@ class OrderProductCreate(CreateView):
         self.object.order = order
         self.object.save()
 
-        return HttpResponseRedirect(reverse('ordersapp:order_detail', kwargs={'pk': order.pk}))
+        return HttpResponseRedirect(
+            reverse(
+                'ordersapp:order_detail',
+                kwargs={
+                    'pk': order.pk}))
+
+
+class OrderProductUpdate(UpdateView):
+    model = OrderProductsList
+    template_name = 'ordersapp/order_product_crud.html'
+    form_class = OrderProductUpdateForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['batch'] = BatchList.objects.filter(
+            product_b__name=self.object.product.pk)
+        return context
+
+    def form_valid(self, form):
+        self.object.save()
+        return HttpResponseRedirect(
+            reverse(
+                'ordersapp:order_detail',
+                kwargs={
+                    'pk': self.object.order.pk}))
 
 
 def order_product_delete(request, pk):

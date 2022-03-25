@@ -22,6 +22,7 @@
         <thead>
             <tr>
                 <th>Название</th>
+                <th></th>
                 <th>Количество</th>
                 <th><a href="{% url 'ordersapp:order_product_create' object.pk %}" class="link-primary">Добавить</a></th>
             </tr>
@@ -29,7 +30,14 @@
         <tbody>
         {%for item in object.get_order_products_list%}
             <tr>
-                <td>{{ item.product.name }}</td>
+                <td>
+                    <a href="{% url 'ordersapp:order_product_update' item.pk %}">
+                        {{ item.product.name }}
+                    </a>
+                </td>
+                <td>
+                    {% if item.batch %} {{item.batch}} {%endif%}
+                </td>
                 <td>
                     {{ item.amount }}
                 </td>
@@ -50,9 +58,10 @@
     {%endif%}
     {%if object.shipped%}
         <p>Отгружено: {{ object.shipped_date|date:"d.m.Y" }} |
-        <a href="{#% url 'shipment:shipped' object.pk %}" style="font-size: 12px; text-decoration: none; border-bottom: 1px dashed;">Посмотреть</a></p>
+            <a href="{% url 'ordersapp:order_shipped' object.pk %}" style="font-size: 12px; text-decoration: none; border-bottom: 1px dashed;">Отменить
+            </a></p>
     {% else %}
-        <a href="{#% url 'shipment:shiped' object.pk %}" class="btn btn-outline-success mb-3">Отгрузить</a>
+        <a href="{% url 'ordersapp:order_shipped' object.pk %}" class="btn btn-outline-success mb-3">Отгрузить</a>
     {%endif%}
     <a href="{% url 'ordersapp:order_update' object.pk %}" class="btn btn-outline-primary mb-3">Редактировать</a>
     <a href="{% url 'ordersapp:order_delete' object.pk %}" class="btn btn-outline-danger mb-3">Удалить</a>
