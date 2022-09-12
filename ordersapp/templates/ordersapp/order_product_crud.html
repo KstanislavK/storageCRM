@@ -1,5 +1,6 @@
 {% extends 'layout/base.html' %}
 {% load static %}
+{% block title %} {{ title}} {% endblock %}
 {% block content %}
 <div class="container">
     <div class="card mb-4">
@@ -8,9 +9,18 @@
         <div class="card-body">
             <form action="" class="form-horizontal" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                <p>Наименование: {{ form.product }}</p>
-                <p>Количество: {{ form.amount }}</p>
-                <p>Партия: {{ form.batch }}</p>
+                <p>Наименование: {{ object.product }}</p>
+                <p>Количество:
+                    <input type="text" value="{{ object.amount }}" name="amount">
+                </p>
+
+                <select aria-label="Партия" id="batch" name="batch" value="{{object.batch}}">
+                    {% for obj in object.get_batches_by_product %}
+                    <option value="{{obj}}" {%if object.batch == obj.batch %}selected {%endif%}>{{obj}}</option>
+                    {% endfor %}
+                </select>
+
+<!--                <p>Партия: {{ form.batch }}</p>-->
                 <div class="container d-flex justify-content-around">
                     <div>
                         <input type="submit" class="form-control btn btn-outline-dark" value="Сохранить">

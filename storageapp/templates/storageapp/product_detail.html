@@ -4,7 +4,7 @@
 {% block content %}
 
 <div class="container">
-    <a href="javascript:history.go(-1)" class="link-dark"><i class="bi bi-arrow-left"></i>Назад</a>
+    <a href="{% url 'storageapp:index' %}" class="link-dark"><i class="bi bi-arrow-left"></i>К товарам</a>
     <h2>{{ title }} {{ object.name }}</h2>
     <p>Артикул: {{ object.part_number }}</p>
     <p>Категория: {{ object.category }}</p>

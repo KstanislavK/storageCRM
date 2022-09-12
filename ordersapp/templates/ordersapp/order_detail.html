@@ -24,16 +24,26 @@
                 <th>Название</th>
                 <th></th>
                 <th>Количество</th>
-                <th><a href="{% url 'ordersapp:order_product_create' object.pk %}" class="link-primary">Добавить</a></th>
+                <th>
+                    {% if not object.shipped %}
+                        <a href="{% url 'ordersapp:order_product_create' object.pk %}" class="link-primary">Добавить</a>
+                    {% endif %}
+                </th>
             </tr>
         </thead>
         <tbody>
         {%for item in object.get_order_products_list%}
             <tr>
                 <td>
-                    <a href="{% url 'ordersapp:order_product_update' item.pk %}">
+                    {% if not object.shipped %}
+                    <a href="{% url 'ordersapp:order_product_update' object.pk item.pk %}">
                         {{ item.product.name }}
                     </a>
+                    {% else %}
+                    <p>
+                        {{ item.product.name }}
+                    </p>
+                    {% endif %}
                 </td>
                 <td>
                     {% if item.batch %} {{item.batch}} {%endif%}
@@ -41,7 +51,11 @@
                 <td>
                     {{ item.amount }}
                 </td>
-                <td><a href="{% url 'ordersapp:order_product_delete' item.pk %}" class="link-primary">Удалить</a></td>
+                <td>
+                    {% if not object.shipped %}
+                        <a href="{% url 'ordersapp:order_product_delete' item.pk %}" class="link-primary">Удалить</a>
+                    {% endif %}
+                </td>
             </tr>
         {%endfor%}
         </tbody>
@@ -63,8 +77,20 @@
     {% else %}
         <a href="{% url 'ordersapp:order_shipped' object.pk %}" class="btn btn-outline-success mb-3">Отгрузить</a>
     {%endif%}
+    {% if not object.self_pickup %}
+        {% if object.for_delivery %}
+            <p>В доставке | <a href="{% url 'ordersapp:for_delivery' object.pk %}" style="font-size: 12px; text-decoration: none; border-bottom: 1px dashed;">Отменить
+            </a></p>
+        {% else %}
+            <a href="{% url 'ordersapp:for_delivery' object.pk %}" class="btn btn-outline-info mb-3 {% if not object.payed %} disabled {%endif%}">
+                На доставку
+            </a>
+        {% endif %}
+    {% endif %}
+</div>
+<div class="container">
     <a href="{% url 'ordersapp:order_update' object.pk %}" class="btn btn-outline-primary mb-3">Редактировать</a>
-    <a href="{% url 'ordersapp:order_delete' object.pk %}" class="btn btn-outline-danger mb-3">Удалить</a>
+    <a href="{% url 'ordersapp:order_delete' object.pk %}" class="btn btn-outline-danger mb-3 {% if object.shipped %} disabled {%endif%}">Удалить</a>
 </div>
 
 {% endblock %}

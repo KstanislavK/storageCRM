@@ -1,26 +1,26 @@
 {% load static %}
 {% for object in todo_objects %}
-<div class="card shadow rounded" style="width: 18rem; margin: 10px;">
-    <div class="card-body">
-        <h5 class="card-title">
-            <a href="{% url 'todoapp:update' object.slug %}" class="card-link link-dark"
-               style="{% if not object.is_active %}opacity: .5; text-decoration: line-through; {% endif %}">
-               {{ object.title }}
-            </a>
-        </h5>
-        <h6 class="card-subtitle mb-2 text-muted"
-            style="{% if not object.is_active %}opacity: .5; text-decoration: line-through; {% endif %}">
-            {{ object.date|date:"d.m.Y, H:i" }},
-            {{ object.user_posted }}</h6>
-        <p class="card-text" style="{% if not object.is_active %}opacity: .5; text-decoration: line-through;{% endif %}">
-            {{ object.text }}
-        </p>
-        {% if object.is_active %}
-        <a href="{% url 'todoapp:complete' object.slug %}" class="card-link link-dark">Завершить</a>
-        {% else %}
-        <a href="{% url 'todoapp:complete' object.slug %}" class="card-link link-dark">Восстановить</a>
-        {% endif %}
-        <a href="{% url 'todoapp:delete' object.slug %}" class="card-link link-dark">Удалить</a>
-    </div>
-</div>
+        <div class="card shadow rounded" style="width: 18rem; margin: 10px;">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{% url 'todoapp:update' object.slug %}" class="card-link link-dark"
+                       style="{% if not object.is_active %}opacity: .5; text-decoration: line-through; {% endif %}">
+                       {{ object.title }}
+                    </a>
+                </h5>
+                <h6 class="card-subtitle mb-2 text-muted"
+                    style="{% if not object.is_active %}opacity: .5; text-decoration: line-through; {% endif %}">
+                    {{ object.date|date:"d.m.Y, H:i" }},
+                    {{ object.user_posted }}</h6>
+                <p class="card-text" style="{% if not object.is_active %}opacity: .5; text-decoration: line-through;{% endif %}">
+                    {{ object.text }}
+                </p>
+                {% if object.is_active %}
+                <a href="{% url 'todoapp:complete' object.slug %}" class="card-link link-dark">Завершить</a>
+                {% else %}
+                <a href="{% url 'todoapp:complete' object.slug %}" class="card-link link-dark">Восстановить</a>
+                {% endif %}
+                <a href="{% url 'todoapp:delete' object.slug %}" class="card-link link-dark">Удалить</a>
+            </div>
+        </div>
 {% endfor %}

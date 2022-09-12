@@ -28,7 +28,7 @@ class UpdateOrderForm(forms.ModelForm):
 class OrderProductForm(forms.ModelForm):
     class Meta:
         model = OrderProductsList
-        exclude = ('order', 'batch')
+        exclude = ('order',)
 
 
 class OrderProductUpdateForm(forms.ModelForm):
@@ -36,7 +36,7 @@ class OrderProductUpdateForm(forms.ModelForm):
     class Meta:
         model = OrderProductsList
         exclude = ('order',)
-        widgets = {
-            'batch': forms.Select()
-        }
+        # widgets = {
+        #     'batch': forms.Select()
+        # }
 

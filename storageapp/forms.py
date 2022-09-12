@@ -6,7 +6,7 @@ from .models import ProductList, NomenList
 class ProductForm(forms.ModelForm):
     class Meta:
         model = ProductList
-        exclude = ('slug', 'is_active')
+        exclude = ('slug', 'is_active', 'name')
 
 
 class NomenForm(forms.ModelForm):

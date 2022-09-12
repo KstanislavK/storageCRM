@@ -3,7 +3,7 @@ from django.db import models
 from django.urls import reverse
 
 from partnersapp.models import PartnersList
-from storageapp.models import NomenList
+from storageapp.models import NomenList, BatchList, ProductList
 
 
 class TKList(models.Model):
@@ -43,6 +43,7 @@ class OrderList(models.Model):
     shipped = models.BooleanField(verbose_name='Отгружено', default=False)
     shipped_date = models.DateField(
         verbose_name='Дата отгрузки', blank=True, null=True)
+    for_delivery = models.BooleanField(verbose_name='На доставку', default=False)
     comment = models.TextField(verbose_name='Комментарий', blank=True)
     user_creator = models.ForeignKey(
         User,
@@ -77,7 +78,8 @@ class OrderProductsList(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Заказ',
         related_name='orderproduct_o')
-    batch = models.CharField(verbose_name='Партия', blank=True, max_length=10)
+    # batch = models.CharField(verbose_name='Партия', blank=True, max_length=10, null=True)
+    batch = models.ForeignKey(BatchList, on_delete=models.CASCADE, verbose_name='Партия', related_name='batches_o', blank=True, null=True)
     amount = models.PositiveIntegerField(verbose_name='Количество')
 
     class Meta:
@@ -90,3 +92,10 @@ class OrderProductsList(models.Model):
 
     def get_absolute_url(self):
         return reverse('ordersapp:order_detail', kwargs={'pk': self.pk})
+
+    def get_prod_by_product(self):
+        products = ProductList.objects.filter(name__name=self.product)
+        return products
+
+    def get_batches_by_product(self):
+        return ProductList.objects.filter(name__name=self.product.name)

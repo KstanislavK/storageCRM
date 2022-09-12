@@ -4,7 +4,7 @@
 {% block content %}
 
 <div class="container">
-    <a href="javascript:history.go(-1)" class="link-dark"><i class="bi bi-arrow-left"></i>Назад</a>
+    <a href="{% url 'storageapp:index' %}" class="link-dark"><i class="bi bi-arrow-left"></i>К товарам</a>
     <h2>{{ title }} {{ object.name }}</h2>
     <p>Артикул: {{ object.part_number }}</p>
     <p>Категория: {{ object.category }}</p>
@@ -25,8 +25,13 @@
                 <td><a href="{% url 'storageapp:active' item.slug %}" class="link-dark">Удалить</a></td>
             </tr>
             {% endfor %}
+            <tr>
+                <td colspan="4">
+                    <a href="{% url 'storageapp:product_create' object.pk %}">Добавить рулоны</a> ||
+                    <a href="{% url 'storageapp:product_create' object.pk %}">Добавить нарезку</a>
+                </td>
+            </tr>
         </table>
-
     </div>
     <p>Описание: {{object.description}}</p>
     <a href="{% url 'storageapp:nomen_update' object.slug %}" class="link-dark">Редактировать</a>

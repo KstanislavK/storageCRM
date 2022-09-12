@@ -102,7 +102,7 @@ class NomenList(models.Model):
         super(NomenList, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('storageapp:nomen_update', kwargs={'slug': self.slug})
+        return reverse('storageapp:nomen_detail', kwargs={'slug': self.slug})
 
     def get_quantity(self):
         dict_1 = ProductList.objects.filter(name=self.pk, is_active=True).aggregate(Sum('amount'))
@@ -130,7 +130,7 @@ class ProductList(models.Model):
         ordering = ['name', 'batch']
 
     def __str__(self):
-        return f'{self.name.name} | {self.batch} ' or ''
+        return f'{self.name.name}-{self.batch}-{self.amount} рул.'
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -157,3 +157,5 @@ class ProductList(models.Model):
         for item in prods:
             prods_by_batch[item.batch] = item.amount
         return prods_by_batch
+
+

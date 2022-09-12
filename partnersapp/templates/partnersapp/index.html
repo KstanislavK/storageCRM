@@ -25,8 +25,16 @@
             <th scope="row">{{ item.pk }}</th>
             <td><a href="{% url 'partnersapp:update' item.slug %}" class="link-dark">{{ item.name }}</a></td>
             <td>{{ item.partner_city }}</td>
-            <td>{{ item.contact_phone }}</td>
-            <td>{{ item.contact_person }}</td>
+            <td>
+                {% if item.contact_phone != None %}
+                    {{ item.contact_phone }}
+                {% endif %}
+            </td>
+            <td>
+                {% if item.contact_person != None %}
+                    {{ item.contact_person }}
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
         </tbody>

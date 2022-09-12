@@ -80,6 +80,17 @@ class ProductCreateView(CreateView):
         context['title'] = 'Добавить товар'
         return context
 
+    def form_valid(self, form):
+        nomen = NomenList.objects.get(pk=self.kwargs['pk'])
+        self.object = form.save(commit=False)
+        self.object.name = nomen
+        self.object.save()
+
+        return HttpResponseRedirect(
+            reverse(
+                'storageapp:nomen_detail',
+                kwargs={'slug': nomen.slug}))
+
 
 class ProductUpdateView(UpdateView):
     model = ProductList

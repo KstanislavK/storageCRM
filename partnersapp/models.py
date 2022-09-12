@@ -17,10 +17,10 @@ class PartnersList(models.Model):
         db_table = 'partnerslist'
         verbose_name = 'Контрагент'
         verbose_name_plural = 'Контрагенты'
-        ordering = ['name']
+        ordering = ['partner_city', 'name']
 
     def __str__(self):
-        return self.name
+        return f'{self.partner_city} | {self.name}'
 
     def save(self, *args, **kwargs):
         if not self.slug:

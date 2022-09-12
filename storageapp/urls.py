@@ -8,7 +8,7 @@ app_name = 'storageapp'
 urlpatterns = [
     path('', product_list, name='index'),
 
-    path('product/create/', ProductCreateView.as_view(), name='product_create'),
+    path('product/create/<int:pk>', ProductCreateView.as_view(), name='product_create'),
     path('product/update/<slug:slug>', ProductUpdateView.as_view(), name='product_update'),
     path('product/delete/<slug:slug>', product_active, name='active'),
     path('product/detail/<slug:slug>/', ProductDetailView.as_view(), name='product_detail'),

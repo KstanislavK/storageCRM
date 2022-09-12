@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 
-from storageapp.models import BatchList
+from storageapp.models import BatchList, ProductList
 from .forms import SearchForm, NewOrderForm, UpdateOrderForm, OrderProductForm, OrderProductUpdateForm
 from .models import OrderList, OrderProductsList
 
@@ -74,6 +74,11 @@ class OrderCreateView(CreateView):
     template_name = 'ordersapp/order_crud_form.html'
     form_class = NewOrderForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Новый заказ'
+        return context
+
     # def form_valid(self, form):
     #     form.instance.user_creator = self.request.user
     #     return super(OrderCreateView, self).form_valid(form)
@@ -120,11 +125,40 @@ def set_payed(request, pk):
 def set_shipped(request, pk):
     order = get_object_or_404(OrderList, pk=pk)
     if request.method == 'GET':
+
         if order.shipped:
             order.shipped = False
+            order_products = OrderProductsList.objects.filter(order=pk)
+            for o_prod in order_products:
+                product = get_object_or_404(ProductList, name=o_prod.product, batch=o_prod.batch)
+                product.amount = product.amount + o_prod.amount
+                product.save()
         else:
             order.shipped = True
             order.shipped_date = datetime.now()
+            order_products = OrderProductsList.objects.filter(order=pk)
+            for o_prod in order_products:
+                product = get_object_or_404(ProductList, name=o_prod.product, batch=o_prod.batch)
+                product.amount = product.amount - o_prod.amount
+                product.save()
+
+        order.save()
+
+
+        return HttpResponseRedirect(
+            reverse(
+                'ordersapp:order_detail',
+                kwargs={
+                    'pk': pk}))
+
+
+def set_for_delivery(request, pk):
+    order = get_object_or_404(OrderList, pk=pk)
+    if request.method == 'GET':
+        if order.for_delivery:
+            order.for_delivery = False
+        else:
+            order.for_delivery = True
         order.save()
 
         return HttpResponseRedirect(
@@ -152,24 +186,24 @@ class OrderProductCreate(CreateView):
                     'pk': order.pk}))
 
 
-class OrderProductUpdate(UpdateView):
-    model = OrderProductsList
-    template_name = 'ordersapp/order_product_crud.html'
-    form_class = OrderProductUpdateForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['batch'] = BatchList.objects.filter(
-            product_b__name=self.object.product.pk)
-        return context
-
-    def form_valid(self, form):
-        self.object.save()
-        return HttpResponseRedirect(
-            reverse(
-                'ordersapp:order_detail',
-                kwargs={
-                    'pk': self.object.order.pk}))
+# class OrderProductUpdate(UpdateView):
+#     model = OrderProductsList
+#     template_name = 'ordersapp/order_product_crud.html'
+#     form_class = OrderProductUpdateForm
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['batch'] = OrderProductsList.get_batches_by_product(self.object)
+#         context['title'] = 'Редактирование товара'
+#         return context
+#
+#     def form_valid(self, form):
+#         self.object.save()
+#         return HttpResponseRedirect(
+#             reverse(
+#                 'ordersapp:order_detail',
+#                 kwargs={
+#                     'pk': self.object.order.pk}))
 
 
 def order_product_delete(request, pk):
@@ -177,3 +211,28 @@ def order_product_delete(request, pk):
     if request.method == 'GET':
         product.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+def order_product_update(request, order_pk, good_pk):
+    object = get_object_or_404(OrderProductsList, pk=good_pk)
+
+    if request.method == 'POST':
+
+        batch = request.POST.get('batch').split('-')[-2]
+        amount = request.POST.get('amount')
+
+        req_batch = get_object_or_404(BatchList, slug=batch)
+
+        object.batch = req_batch
+        object.amount = amount
+
+        object.save()
+
+        return HttpResponseRedirect(reverse('ordersapp:order_detail', kwargs={'pk': order_pk}))
+
+    context = {
+        'title': 'Редактирование товара',
+        'object': object,
+    }
+    return render(request, 'ordersapp/order_product_crud.html', context)
+

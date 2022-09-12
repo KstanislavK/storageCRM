@@ -24,7 +24,7 @@ class TodoCreateView(CreateView):
     model = ToDoList
     template_name = 'todoapp/todo_crud_form.html'
     context_object_name = 'todo_objects'
-    fields = ['user_posted', 'title', 'text']
+    fields = ['title', 'text']
 
     def get_context_data(self,  **kwargs):
         context = super(TodoCreateView, self).get_context_data(**kwargs)
