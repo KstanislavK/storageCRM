@@ -49,7 +49,11 @@
                     {% if item.batch %} {{item.batch}} {%endif%}
                 </td>
                 <td>
-                    {{ item.amount }}
+                    {% if item.is_retail %}
+                        {{ item.amount }} м.п.
+                    {% else %}
+                        {{ item.amount|floatformat:0 }} рул.
+                    {% endif %}
                 </td>
                 <td>
                     {% if not object.shipped %}

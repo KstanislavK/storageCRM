@@ -78,9 +78,9 @@ class OrderProductsList(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Заказ',
         related_name='orderproduct_o')
-    # batch = models.CharField(verbose_name='Партия', blank=True, max_length=10, null=True)
     batch = models.ForeignKey(BatchList, on_delete=models.CASCADE, verbose_name='Партия', related_name='batches_o', blank=True, null=True)
-    amount = models.PositiveIntegerField(verbose_name='Количество')
+    is_retail = models.BooleanField(verbose_name='Нарезка', default=False)
+    amount = models.FloatField(verbose_name='Количество')
 
     class Meta:
         db_table = 'orderproductlist'
@@ -98,4 +98,4 @@ class OrderProductsList(models.Model):
         return products
 
     def get_batches_by_product(self):
-        return ProductList.objects.filter(name__name=self.product.name)
+        return ProductList.objects.filter(name__name=self.product.name, is_active=True)

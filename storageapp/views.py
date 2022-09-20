@@ -120,6 +120,31 @@ def product_active(request, slug):
         return HttpResponseRedirect(reverse('storageapp:nomen_detail', kwargs={'slug': prod_slug}))
 
 
+def roll_to_retail(request, slug):
+    product = get_object_or_404(ProductList, slug=slug)
+    prod_slug = NomenList.objects.get(product__slug=slug).slug
+
+    if request.method == 'GET':
+        product.amount = product.amount - 1
+        product.save()
+
+        new_ret = ProductList(
+            name=product.name,
+            batch=product.batch,
+            is_active=True,
+            is_retail=True,
+            amount=NomenList.objects.get(product__slug=slug).meters
+            )
+
+        new_ret.save()
+
+        return HttpResponseRedirect(
+            reverse(
+                'storageapp:nomen_detail',
+                kwargs={
+                    'slug': prod_slug}))
+
+
 class NomenCreateView(CreateView):
     model = NomenList
     template_name = 'storageapp/product_create_form.html'
@@ -149,3 +174,8 @@ class NomenDetailView(DetailView):
     model = NomenList
     template_name = 'storageapp/nomen_detail.html'
     context_object_name = 'object'
+
+    def get_context_data(self, **kwargs):
+        context = super(NomenDetailView, self).get_context_data(**kwargs)
+        context['retail'] = ProductList.objects.filter(name=self.object, is_retail=True, is_active=True)
+        return context

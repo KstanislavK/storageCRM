@@ -130,7 +130,7 @@ def set_shipped(request, pk):
             order.shipped = False
             order_products = OrderProductsList.objects.filter(order=pk)
             for o_prod in order_products:
-                product = get_object_or_404(ProductList, name=o_prod.product, batch=o_prod.batch)
+                product = get_object_or_404(ProductList, name=o_prod.product, batch=o_prod.batch, is_retail=o_prod.is_retail)
                 product.amount = product.amount + o_prod.amount
                 product.save()
         else:
@@ -138,12 +138,11 @@ def set_shipped(request, pk):
             order.shipped_date = datetime.now()
             order_products = OrderProductsList.objects.filter(order=pk)
             for o_prod in order_products:
-                product = get_object_or_404(ProductList, name=o_prod.product, batch=o_prod.batch)
+                product = get_object_or_404(ProductList, name=o_prod.product, batch=o_prod.batch, is_retail=o_prod.is_retail)
                 product.amount = product.amount - o_prod.amount
                 product.save()
 
         order.save()
-
 
         return HttpResponseRedirect(
             reverse(
@@ -186,26 +185,6 @@ class OrderProductCreate(CreateView):
                     'pk': order.pk}))
 
 
-# class OrderProductUpdate(UpdateView):
-#     model = OrderProductsList
-#     template_name = 'ordersapp/order_product_crud.html'
-#     form_class = OrderProductUpdateForm
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['batch'] = OrderProductsList.get_batches_by_product(self.object)
-#         context['title'] = 'Редактирование товара'
-#         return context
-#
-#     def form_valid(self, form):
-#         self.object.save()
-#         return HttpResponseRedirect(
-#             reverse(
-#                 'ordersapp:order_detail',
-#                 kwargs={
-#                     'pk': self.object.order.pk}))
-
-
 def order_product_delete(request, pk):
     product = get_object_or_404(OrderProductsList, pk=pk)
     if request.method == 'GET':
@@ -218,12 +197,17 @@ def order_product_update(request, order_pk, good_pk):
 
     if request.method == 'POST':
 
-        batch = request.POST.get('batch').split('-')[-2]
-        amount = request.POST.get('amount')
+        retail = request.POST.getlist('is_retail')
+        if len(retail) > 0:
+            object.is_retail = True
+        else:
+            object.is_retail = False
 
-        req_batch = get_object_or_404(BatchList, slug=batch)
+        b_slug = request.POST.get('batch').split('-')[1]
+        batch = get_object_or_404(BatchList, slug=b_slug)
+        amount = float(request.POST.get('amount').replace(',', '.'))
 
-        object.batch = req_batch
+        object.batch = batch
         object.amount = amount
 
         object.save()

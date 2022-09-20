@@ -36,7 +36,7 @@
     <tr>
         <th>Номер</th>
         <th>Покупатель</th>
-        <th>Товар/Количество</th>
+        <th>Товар: Количество</th>
         <th>ТК/Адрес</th>
         <th>Статус</th>
     </tr>
@@ -53,14 +53,24 @@
             <td>
                 <a href="{% url 'ordersapp:order_detail' item.pk%}" class="link-dark">
                     {{ item.partner.partner_city }}, {{ item.partner.name }}
-                </a>
+                </a><br>
+                {% if item.shipped %}
+                    <span style="font-size: 12px;">Отгружен {{ item.shipped_date|date:"d.m.Y" }}</span>
+                {% endif %}
             </td>
             <td>
                 <table>
                     {% for good in item.get_order_products_list %}
                     <tr>
                         <td>{{ good.product.name }}:</td>
-                        <td style="text-align:center;width: 30%">{{ good.amount }}</td>
+                        <td style="text-align:center;width: 30%">
+                            {% if good.is_retail %}
+                                {{ good.amount }} м.п.
+                            {% else %}
+                                {{ good.amount|floatformat:0 }} рул.
+                            {% endif %}
+                        </td>
+
                     </tr>
                     {% endfor %}
                 </table>

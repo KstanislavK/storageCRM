@@ -1,3 +1,5 @@
+from random import randint
+
 from django.db import models
 from django.urls import reverse
 from slugify import slugify
@@ -84,7 +86,8 @@ class NomenList(models.Model):
                                  on_delete=models.CASCADE, related_name='nomen')
     maker = models.ForeignKey(MakerList, verbose_name='Производитель',
                               on_delete=models.CASCADE, related_name='nomen')
-    description = models.CharField(verbose_name='Описание', max_length=512, blank=True, null=True)
+    description = models.CharField(verbose_name='Описание', max_length=512, blank=True, null=True, default='')
+    meters = models.IntegerField(verbose_name='Намотка', default=30)
     slug = models.SlugField(verbose_name='URL', max_length=255, unique=True)
 
     class Meta:
@@ -105,22 +108,26 @@ class NomenList(models.Model):
         return reverse('storageapp:nomen_detail', kwargs={'slug': self.slug})
 
     def get_quantity(self):
-        dict_1 = ProductList.objects.filter(name=self.pk, is_active=True).aggregate(Sum('amount'))
+        dict_1 = ProductList.objects.filter(name=self.pk, is_active=True, is_retail=False).aggregate(Sum('amount'))
         for key in dict_1:
             if dict_1[key] is None:
                 return 0
             return dict_1[key]
 
     def get_prod_batches(self):
-        return ProductList.objects.filter(name=self.pk, is_active=True)
+        return ProductList.objects.filter(name=self.pk, is_active=True, is_retail=False)
+
+    def get_prod_retail(self):
+        return ProductList.objects.filter(name=self.pk, is_retail=True, is_active=True)
 
 
 class ProductList(models.Model):
     name = models.ForeignKey(NomenList, verbose_name='Название',
                              on_delete=models.CASCADE, max_length=128, related_name='product')
     batch = models.ForeignKey(BatchList, verbose_name='Партия', on_delete=models.CASCADE, related_name='product_b')
-    amount = models.IntegerField(verbose_name='Количество')
+    amount = models.FloatField(verbose_name='Количество')
     is_active = models.BooleanField(verbose_name='Активный', default=True)
+    is_retail = models.BooleanField(verbose_name='Нарезка', default=False)
     slug = models.SlugField(verbose_name='URL', max_length=255, unique=True)
 
     class Meta:
@@ -130,32 +137,37 @@ class ProductList(models.Model):
         ordering = ['name', 'batch']
 
     def __str__(self):
-        return f'{self.name.name}-{self.batch}-{self.amount} рул.'
+        if self.is_retail:
+            return f'{self.name.name}-{self.batch}-{self.amount}-ret'
+        return f'{self.name.name}-{self.batch}-{self.amount}'
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(f'{self.name.name}-{self.batch}')
+        if not self.slug and self.is_retail:
+            self.slug = slugify(f'{self.name.name}-{self.batch}-retail-{randint(1,9)}')
+        elif not self.slug:
+            self.slug = slugify(f'{self.name.name}-{self.batch}-roll')
         super(ProductList, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
+        if self.is_retail:
+            return reverse('storageapp:product_update', kwargs={'slug': self.slug})
         return reverse('storageapp:product_update', kwargs={'slug': self.slug})
 
     def get_product_sum(self):
-        dict_1 = ProductList.objects.filter(name=self.name, is_active=True).aggregate(Sum('amount'))
+        dict_1 = ProductList.objects.filter(name=self.name, is_active=True, is_retail=False).aggregate(Sum('amount'))
         for key in dict_1:
             return dict_1[key]
 
     @staticmethod
     def get_all_products_amount():
-        dict_1 = ProductList.objects.filter(is_active=True).aggregate(Sum('amount'))
+        dict_1 = ProductList.objects.filter(is_active=True, is_retail=False).aggregate(Sum('amount'))
         for key in dict_1:
             return dict_1[key]
 
     def get_product_batches(self):
-        prods = ProductList.objects.filter(name=self.name, is_active=True)
+        prods = ProductList.objects.filter(name=self.name, is_active=True, is_retail=False)
         prods_by_batch = {}
         for item in prods:
             prods_by_batch[item.batch] = item.amount
         return prods_by_batch
-
 
