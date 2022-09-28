@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
@@ -12,6 +13,10 @@ from .models import OrderList, OrderProductsList
 
 def get_order_list(request):
     objects = OrderList.objects.all()
+    paginator = Paginator(objects, 15)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     if request.method == 'POST':
         form = SearchForm(request.POST)
 
@@ -38,12 +43,13 @@ def get_order_list(request):
                         tk__name__contains=data_for_search)) +
                 search_results)
             context = {
-                'objects': search_results,
+                'page_obj': search_results,
                 'form': form,
             }
             return render(request, 'ordersapp/index.html', context)
+
     context = {
-        'objects': objects,
+        'page_obj': page_obj,
     }
     return render(request, 'ordersapp/index.html', context)
 
@@ -53,6 +59,7 @@ class OrderActiveListView(ListView):
     model = OrderList
     template_name = 'ordersapp/index.html'
     context_object_name = 'objects'
+    paginate_by = 10
 
     def get_queryset(self):
         return OrderList.objects.filter(shipped=False)

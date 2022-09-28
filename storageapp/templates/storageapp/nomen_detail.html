@@ -10,41 +10,45 @@
     <p>Категория: {{ object.category }}</p>
     <p>Количество: <strong>{{object.get_quantity|floatformat:0 }}</strong></p>
     <p>Доступные партии:</p>
-    <div style="max-width: 40%;">
+    <div style="max-width: 600px;">
         <table class="table table-sm" style="text-align: center;">
             <tr>
                 <th>Партия</th>
                 <th>Количество</th>
+                <th>Полки</th>
                 <th colspan="3">Действия</th>
             </tr>
             {% for item in object.get_prod_batches %}
             <tr>
                 <td>{{ item.batch }}</td>
                 <td>{{ item.amount|floatformat:0 }}</td>
+                <td>{{ item.place }}</td>
                 <td><a href="{% url 'storageapp:product_update' item.slug %}" class="link-dark">Изменить</a></td>
                 <td><a href="{% url 'storageapp:active' item.slug %}" class="link-dark">Удалить</a></td>
                 <td><a href="{% url 'storageapp:roll_to_retail' item.slug %}" class="link-dark">Отдать в нарезку</a></td>
             </tr>
             {% endfor %}
             <tr>
-                <td colspan="4">
+                <td colspan="5">
                     <a href="{% url 'storageapp:product_create' object.pk %}">Добавить</a>
                 </td>
             </tr>
         </table>
     </div>
     <p>Нарезка</p>
-    <div style="max-width: 40%;">
+    <div style="max-width: 600px;">
         <table class="table table-sm" style="text-align: center;">
             <tr>
                 <th>Партия</th>
                 <th>Количество</th>
+                <th>Полки</th>
                 <th colspan="2">Действия</th>
             </tr>
             {% for item in retail %}
             <tr>
                 <td>{{ item.batch }}</td>
                 <td>{{ item.amount }}</td>
+                <td>{{ item.place }}</td>
                 <td><a href="{% url 'storageapp:product_update' item.slug %}" class="link-dark">Изменить</a></td>
                 <td><a href="{% url 'storageapp:active' item.slug %}" class="link-dark">Удалить</a></td>
             </tr>
@@ -57,6 +61,7 @@
         </table>
     </div>
     <p>Описание: {{object.description}}</p>
+    <p>Намотка: {{ object.meters }} м.п.</p>
     <a href="{% url 'storageapp:nomen_update' object.slug %}" class="link-dark">Редактировать</a>
 </div>
 {% endblock %}

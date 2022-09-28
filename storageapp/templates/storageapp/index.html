@@ -42,7 +42,7 @@
             <th scope="col">Название</th>
             <th scope="col">Рулоны</th>
             <th scope="col">Нарезка</th>
-            <th scope="col">Артикул</th>
+            <th scope="col">Полки</th>
             <th scope="col">Категория</th>
         </tr>
         </thead>
@@ -53,12 +53,8 @@
                 <a href="{% url 'storageapp:nomen_detail' item.slug %}" class="link-dark">{{ item.name }}</a>
             </th>
             <td>{{ item.get_quantity|floatformat:0 }}</td>
-            <td>
-                {% for qnt in item.get_prod_retail %}
-                    {{ qnt.amount }}
-                {% endfor %}
-            </td>
-            <td>{{ item.part_number }}</td>
+            <td>{{ item.get_prod_retail }}</td>
+            <td>{{ item.get_prod_places }}</td>
             <td>{{ item.category }}</td>
         </tr>
         {% endfor %}

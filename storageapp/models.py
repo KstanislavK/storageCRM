@@ -118,7 +118,22 @@ class NomenList(models.Model):
         return ProductList.objects.filter(name=self.pk, is_active=True, is_retail=False)
 
     def get_prod_retail(self):
-        return ProductList.objects.filter(name=self.pk, is_retail=True, is_active=True)
+        ret = ProductList.objects.filter(name=self.pk, is_retail=True, is_active=True)
+        amounts = []
+        for item in ret:
+            if item.amount != 0:
+                amounts.append(str(item.amount))
+        am = ', '.join(amounts)
+        return am
+
+    def get_prod_places(self):
+        prods = ProductList.objects.filter(name=self.pk)
+        places = []
+        for item in prods:
+            if item.place != '':
+                places.append(item.place)
+        pl = ', '.join(places)
+        return pl
 
 
 class ProductList(models.Model):
@@ -126,6 +141,7 @@ class ProductList(models.Model):
                              on_delete=models.CASCADE, max_length=128, related_name='product')
     batch = models.ForeignKey(BatchList, verbose_name='Партия', on_delete=models.CASCADE, related_name='product_b')
     amount = models.FloatField(verbose_name='Количество')
+    place = models.CharField(verbose_name='Полки', max_length=256, default='', blank=True)
     is_active = models.BooleanField(verbose_name='Активный', default=True)
     is_retail = models.BooleanField(verbose_name='Нарезка', default=False)
     slug = models.SlugField(verbose_name='URL', max_length=255, unique=True)

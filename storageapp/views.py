@@ -18,6 +18,7 @@ def product_list(request):
 
             if data_for_search.isdigit():
                 search_results = list(NomenList.objects.filter(pk=int(data_for_search)))
+
             search_results = set(list(NomenList.objects.filter(part_number__contains=data_for_search)) + \
                                  list(NomenList.objects.filter(name__contains=data_for_search)) + \
                                  search_results)

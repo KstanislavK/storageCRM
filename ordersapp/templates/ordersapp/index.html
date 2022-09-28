@@ -18,7 +18,7 @@
             {% csrf_token %}
             <div class="input-group mb-3">
                 <input type="text" class="form-control"
-                       placeholder="Введите номер заказа" name="data_for_search">
+                       placeholder="Введите номер заказа, контрагента, адрес" name="data_for_search">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="submit" value="OK">Поиск</button>
                 </div>
@@ -42,7 +42,7 @@
     </tr>
     </thead>
     <tbody>
-        {% for item in objects %}
+        {% for item in page_obj %}
         <tr>
             <td>
                 <a href="{% url 'ordersapp:order_detail' item.pk%}" class="link-dark">
@@ -107,6 +107,36 @@
         {% endfor %}
     </tbody>
 </table>
+
+<nav aria-label="Navigation">
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a href="?page=1" class="page-link link-dark">Первая</a>
+            </li>
+            <li>
+                <a href="?page={{ page_obj.previous_page_number }}" class="page-link link-dark">&laquo;</a>
+            </li>
+        {% endif %}
+
+        {% for page in page_obj.paginator.page_range %}
+            <li class="page-item">
+                <a href="?page={{page}}" class="page-link link-dark">{{page}}</a>
+            </li>
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a href="?page={{ page_obj.next_page_number }}" class="page-link link-dark">&raquo;</a>
+            </li>
+            <li>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link link-dark">Последняя</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+
+<br><br><br>
 <div class="container">
 </div>
 {% endblock %}
