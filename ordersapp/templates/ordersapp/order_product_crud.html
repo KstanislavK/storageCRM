@@ -1,8 +1,9 @@
 {% extends 'layout/base.html' %}
 {% load static %}
-{% block title %} {{ title}} {% endblock %}
+{% block title %} {{ title }} {{ obj.name }}{% endblock %}
 {% block content %}
-<div class="container">
+<div class="container" style="max-width: 600px">
+    <a href="javascript: history.go(-1)" class="link-dark"><i class="bi bi-arrow-left"></i>Назад</a>
     <div class="card mb-4">
         <div class="card-header">{{ title }}
         </div>

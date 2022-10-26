@@ -22,5 +22,7 @@ urlpatterns = [
     path('', include('mainapp.urls', namespace='mainapp')),
     path('partners/', include('partnersapp.urls', namespace='partnersapp')),
     path('storage/', include('storageapp.urls', namespace='storageapp')),
-    path('orders/', include('ordersapp.urls', namespace='ordersapp'))
+    path('orders/', include('ordersapp.urls', namespace='ordersapp')),
+    path('transport/', include('transportapp.urls', namespace='transportapp')),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]

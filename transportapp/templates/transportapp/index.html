@@ -1,0 +1,119 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block title %}{{title}}{% endblock %}
+{% block content%}
+<div class="container">
+    <div>
+        <h3>{{title}}</h3>
+    </div>
+</div>
+<div class="container d-flex justify-content-between">
+    <div>
+        <a href="{% url 'transportapp:index' %}" class="btn btn-outline-dark mb-3">Все</a>
+        <a href="{% url 'transportapp:active_rides' %}" class="btn btn-outline-success mb-3">Активные</a>
+    </div>
+    <div class="col-6">
+        <form action="/transport/" method="post" class="col-auto mb-3">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+                <input type="text" class="form-control"
+                       placeholder="Введите" name="data_for_search">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" value="OK">Поиск</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div>
+        <a href="{% url 'transportapp:ride_create' %}" class="btn btn-outline-dark mb-3">
+            <i class="bi bi-plus-lg"></i> Поездка
+        </a>
+        <a href="{% url 'transportapp:mileage_list' %}" class="btn btn-outline-dark mb-3">
+             Пробеги
+        </a>
+    </div>
+</div>
+{% if objects %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Дата</th>
+            <th>Цель</th>
+            <th>Адрес</th>
+            <th>Описание</th>
+            <th>Статус</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for item in objects %}
+    <tr>
+        <td>
+            {{ item.created_at|date:"d.m.Y" }}
+        </td>
+        <td>
+            {{ item.title }} {{ item.order.partner.name}}
+        </td>
+        <td>
+            <a href="https://yandex.ru/maps/?text={{item.address}}" class="link-dark" target="_blank">
+                {{ item.address }} <i class="bi bi-box-arrow-up-right"></i>
+            </a>
+        </td>
+        <td>
+            {% if item.order %}
+                <a href="{% url 'ordersapp:order_detail' item.order.pk %}" class="link-dark" target="_blank">Заказ № {{item.order.pk}}</a><br>
+                {{ item.order.description }}
+            {% else %}
+                {{ item.description }}
+            {% endif %}
+        </td>
+        <td>
+            {% if not item.delivered %}
+                <a href="{% url 'transportapp:ride_delivered' item.pk %}" class="link-success">Провести</a>
+                | <a href="{% url 'transportapp:ride_delete' item.pk %}" class="link-danger">Удалить</a>
+            {% else %}
+                <span class="badge bg-success">Выполнено:</span><br><span style="font-size: 12px">{{item.delivered_at|date:"d.m.Y"}}</span>
+            <a href="{% url 'transportapp:ride_delivered' item.pk %}" style="font-size: 12px; text-decoration: none; border-bottom: 1px dashed;">Снять</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div>
+    <nav aria-label="Navigation">
+        <ul class="pagination">
+            {% if objects.has_previous %}
+                <li class="page-item">
+                    <a href="?page=1" class="page-link link-dark">Первая</a>
+                </li>
+                <li>
+                    <a href="?page={{ objects.previous_page_number }}" class="page-link link-dark">&laquo;</a>
+                </li>
+            {% endif %}
+
+            {% for page in objects.paginator.page_range %}
+                {% if objects.number == page %}
+                    <li class="page-item active"><a class="page-link link-dark">{{page}}</a></li>
+                {% else %}
+                    <li class="page-item">
+                        <a href="?page={{page}}" class="page-link link-dark">{{page}}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if objects.has_next %}
+                <li class="page-item">
+                    <a href="?page={{ objects.paginator.next_page_number }}" class="page-link link-dark">&raquo;</a>
+                </li>
+                <li>
+                    <a href="?page={{ objects.paginator.num_pages }}" class="page-link link-dark">Последняя</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% else %}
+Нет данных
+{% endif %}
+<div style="padding-bottom: 30px;"></div>
+{% endblock %}

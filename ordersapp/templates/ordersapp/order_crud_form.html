@@ -1,14 +1,30 @@
 {% extends 'layout/base.html' %}
 {% load static %}
 {% block content %}
-<div class="container">
+<div class="container" style="max-width: 600px">
+    <a href="javascript: history.go(-1)" class="link-dark"><i class="bi bi-arrow-left"></i>Назад</a>
     <div class="card mb-4">
-        <div class="card-header">{{ title }}
-        </div>
+        <div class="card-header">{{ title }} № {{ obj.pk }}</div>
         <div class="card-body">
             <form action="" class="form-horizontal" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{ form.as_p }}
+                <p>Контрагент: {{ form.partner }}</p>
+                <hr>
+                <h6>Способ получения</h6>
+                <span style="font-size: 11px;">*В случае доставки до адреса контрагента - оставить поля пустыми*</span>
+                <p>
+                    {{ form.self_pickup.errors}}
+                    <label for="{{ form.self_pickup.id_for_label }}">Самовывоз:</label>
+                    {{form.self_pickup}} или Транспортная: {{form.tk}}
+                </p>
+                <hr>
+                <h6>Необязательные аргументы</h6>
+                <p>
+                    <label for="{{ form.payed.id_for_label }}">Оплачен:</label>
+                     {{form.payed}}
+                </p>
+                Комментарий: <br>{{form.comment}}
+                <hr>
                 <div class="container d-flex justify-content-around">
                     <div>
                         <input type="submit" class="form-control btn btn-outline-dark" value="Сохранить">

@@ -2,22 +2,24 @@
 {% load static %}
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
-<div class="container d-flex justify-content-between">
+<br>
+<div class="container">
     <div>
         <h3>{{title}}</h3>
     </div>
-
 </div>
-<div class="container d-flex justify-content-between">
+<div class="d-flex justify-content-between">
     <div>
         <a href="{% url 'ordersapp:index' %}" class="btn btn-outline-dark mb-3">Все</a>
         <a href="{% url 'ordersapp:active_orders' %}" class="btn btn-outline-success mb-3">Активные</a>
+        <a href="{% url 'ordersapp:statistics' %}" class="btn btn-outline-primary mb-3">Статистики</a>
     </div>
     <div class="col-6">
         <form action="/orders/" method="post" class="col-auto mb-3">
             {% csrf_token %}
             <div class="input-group mb-3">
                 <input type="text" class="form-control"
+                       {%if dfs%} value="{{dfs}}" {%endif%}
                        placeholder="Введите номер заказа, контрагента, адрес" name="data_for_search">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="submit" value="OK">Поиск</button>
@@ -67,7 +69,7 @@
                             {% if good.is_retail %}
                                 {{ good.amount }} м.п.
                             {% else %}
-                                {{ good.amount|floatformat:0 }} рул.
+                                {{ good.amount|floatformat:0 }} шт.
                             {% endif %}
                         </td>
 

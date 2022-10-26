@@ -99,3 +99,6 @@ class OrderProductsList(models.Model):
 
     def get_batches_by_product(self):
         return ProductList.objects.filter(name__name=self.product.name, is_active=True)
+
+
+

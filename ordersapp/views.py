@@ -1,16 +1,23 @@
-from datetime import datetime
+from datetime import datetime, date
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
+from django.db.models import Sum
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 
-from storageapp.models import BatchList, ProductList
-from .forms import SearchForm, NewOrderForm, UpdateOrderForm, OrderProductForm, OrderProductUpdateForm
+from partnersapp.models import PartnersList
+from storageapp.models import BatchList, ProductList, NomenList
+from transportapp.models import RideList
+from .adiitional_functions import count_sold_products
+from .forms import SearchForm, NewOrderForm, UpdateOrderForm, OrderProductForm
 from .models import OrderList, OrderProductsList
 
 
+@login_required
 def get_order_list(request):
     objects = OrderList.objects.all()
     paginator = Paginator(objects, 15)
@@ -45,16 +52,18 @@ def get_order_list(request):
             context = {
                 'page_obj': search_results,
                 'form': form,
+                'dfs': data_for_search,
             }
             return render(request, 'ordersapp/index.html', context)
 
     context = {
         'page_obj': page_obj,
+        'title': 'Все заказы',
     }
     return render(request, 'ordersapp/index.html', context)
 
 
-class OrderActiveListView(ListView):
+class OrderActiveListView(LoginRequiredMixin, ListView):
     """ Общий вывод активных заказов """
     model = OrderList
     template_name = 'ordersapp/index.html'
@@ -70,28 +79,37 @@ class OrderActiveListView(ListView):
         return context
 
 
-class OrderDetailView(DetailView):
+class OrderDetailView(LoginRequiredMixin, DetailView):
     model = OrderList
     template_name = 'ordersapp/order_detail.html'
     context_object_name = 'object'
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(OrderDetailView, self).get_context_data(*args, **kwargs)
+        try:
+            ride = get_object_or_404(RideList, order=self.object)
+            context['ride'] = ride
+        except:
+            pass
+        return context
 
-class OrderCreateView(CreateView):
+
+class OrderCreateView(LoginRequiredMixin, CreateView):
     model = OrderList
     template_name = 'ordersapp/order_crud_form.html'
     form_class = NewOrderForm
+
+    def form_valid(self, form):
+        form.instance.user_creator = self.request.user
+        return super(OrderCreateView, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Новый заказ'
         return context
 
-    # def form_valid(self, form):
-    #     form.instance.user_creator = self.request.user
-    #     return super(OrderCreateView, self).form_valid(form)
 
-
-class OrderUpdateView(UpdateView):
+class OrderUpdateView(LoginRequiredMixin, UpdateView):
     model = OrderList
     template_name = 'ordersapp/order_crud_form.html'
     form_class = UpdateOrderForm
@@ -103,9 +121,11 @@ class OrderUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(OrderUpdateView, self).get_context_data(**kwargs)
         context['title'] = 'Редактирование заказа'
+        context['obj'] = OrderList.objects.get(pk=self.kwargs['pk'])
         return context
 
 
+@login_required
 def order_delete(request, pk):
     order = get_object_or_404(OrderList, pk=pk)
     if request.method == 'GET':
@@ -113,6 +133,7 @@ def order_delete(request, pk):
     return HttpResponseRedirect(reverse('ordersapp:index'))
 
 
+@login_required
 def set_payed(request, pk):
     order = get_object_or_404(OrderList, pk=pk)
     if request.method == 'GET':
@@ -129,6 +150,7 @@ def set_payed(request, pk):
                     'pk': pk}))
 
 
+@login_required
 def set_shipped(request, pk):
     order = get_object_or_404(OrderList, pk=pk)
     if request.method == 'GET':
@@ -158,13 +180,27 @@ def set_shipped(request, pk):
                     'pk': pk}))
 
 
+@login_required
 def set_for_delivery(request, pk):
     order = get_object_or_404(OrderList, pk=pk)
     if request.method == 'GET':
         if order.for_delivery:
             order.for_delivery = False
+            ride = get_object_or_404(RideList, order=order)
+            ride.delete()
         else:
             order.for_delivery = True
+
+            if order.tk:
+                ride_adr = order.tk
+            else:
+                ride_adr = order.partner.address
+            ride = RideList(
+                title='Доставка пленки',
+                address=ride_adr,
+                order=order,
+            )
+            ride.save()
         order.save()
 
         return HttpResponseRedirect(
@@ -174,7 +210,7 @@ def set_for_delivery(request, pk):
                     'pk': pk}))
 
 
-class OrderProductCreate(CreateView):
+class OrderProductCreate(LoginRequiredMixin, CreateView):
     model = OrderProductsList
     form_class = OrderProductForm
     template_name = 'ordersapp/order_product_create.html'
@@ -192,6 +228,7 @@ class OrderProductCreate(CreateView):
                     'pk': order.pk}))
 
 
+@login_required
 def order_product_delete(request, pk):
     product = get_object_or_404(OrderProductsList, pk=pk)
     if request.method == 'GET':
@@ -199,6 +236,7 @@ def order_product_delete(request, pk):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
+@login_required
 def order_product_update(request, order_pk, good_pk):
     object = get_object_or_404(OrderProductsList, pk=good_pk)
 
@@ -227,3 +265,58 @@ def order_product_update(request, order_pk, good_pk):
     }
     return render(request, 'ordersapp/order_product_crud.html', context)
 
+
+@login_required
+def statistics(request):
+    clients = PartnersList.objects.all()
+    selected_client = request.POST.get('client_list')
+    date_from = request.POST.get('date_from')
+    date_to = request.POST.get('date_to')
+    objects = None
+    calc_objects = None
+
+    if selected_client:
+        partner = PartnersList.objects.get(name=selected_client.split('|')[1].strip())
+    else:
+        partner = ''
+
+    if date_to == '':
+        date_to = date.today().strftime("%Y-%m-%d")
+    if date_from == '':
+        date_from = date(2020, 1, 1).strftime("%Y-%m-%d")
+
+    if request.method == 'POST':
+        if partner == '':
+            calc_objects = OrderProductsList.objects.filter(order__shipped_date__gte=date_from,
+                                                            order__shipped_date__lte=date_to,
+                                                            is_retail=False)
+            if len(calc_objects) > 0:
+                objects = count_sold_products(calc_objects)
+        else:
+            calc_objects = OrderProductsList.objects.filter(order__partner=partner,
+                                                            order__shipped_date__gte=date_from,
+                                                            order__shipped_date__lte=date_to,
+                                                            is_retail=False)
+            if len(calc_objects) > 0:
+                objects = count_sold_products(calc_objects)
+
+    if calc_objects:
+        total_sold = calc_objects.aggregate(Sum('amount'))
+
+        tot = 0
+
+        for key in total_sold:
+            tot = total_sold[key]
+    else:
+        tot = 0
+
+    context = {
+        'objects': objects,
+        'clients': clients,
+        'partner': partner,
+        'date_from': date_from,
+        'date_to': date_to,
+        'total_sold': int(tot),
+    }
+
+    return render(request, 'ordersapp/statistic.html', context)

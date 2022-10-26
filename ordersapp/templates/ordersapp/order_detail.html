@@ -52,7 +52,7 @@
                     {% if item.is_retail %}
                         {{ item.amount }} м.п.
                     {% else %}
-                        {{ item.amount|floatformat:0 }} рул.
+                        {{ item.amount|floatformat:0 }} шт.
                     {% endif %}
                 </td>
                 <td>
@@ -66,6 +66,7 @@
     </table>
     <p><b>Комментарий:</b> {{ object.comment }}</p>
 </div>
+
 <div class="container d-flex justify-content-between">
     {%if object.payed%}
         <p>Оплачен |
@@ -75,25 +76,36 @@
         <a href="{% url 'ordersapp:order_payed' object.pk %}" class="btn btn-outline-warning mb-3">Оплатили</a>
     {%endif%}
     {%if object.shipped%}
-        <p>Отгружено: {{ object.shipped_date|date:"d.m.Y" }} |
+        {% if ride.delivered %}
+            <p>Отгружено: {{ object.shipped_date|date:"d.m.Y" }}</p>
+        {% else %}
+            <p>Отгружено: {{ object.shipped_date|date:"d.m.Y" }} |
             <a href="{% url 'ordersapp:order_shipped' object.pk %}" style="font-size: 12px; text-decoration: none; border-bottom: 1px dashed;">Отменить
             </a></p>
+        {% endif %}
     {% else %}
         <a href="{% url 'ordersapp:order_shipped' object.pk %}" class="btn btn-outline-success mb-3">Отгрузить</a>
     {%endif%}
     {% if not object.self_pickup %}
         {% if object.for_delivery %}
-            <p>В доставке | <a href="{% url 'ordersapp:for_delivery' object.pk %}" style="font-size: 12px; text-decoration: none; border-bottom: 1px dashed;">Отменить
-            </a></p>
+            {% if ride.delivered %}
+                <p>
+                    Доставлено: {{ ride.delivered_at|date:"d.m.Y" }}
+                </p>
+            {% else %}
+                <p>В доставке |
+                    <a href="{% url 'ordersapp:for_delivery' object.pk %}" style="font-size: 12px; text-decoration: none; border-bottom: 1px dashed;">Отменить</a>
+                </p>
+            {% endif %}
         {% else %}
-            <a href="{% url 'ordersapp:for_delivery' object.pk %}" class="btn btn-outline-info mb-3 {% if not object.payed %} disabled {%endif%}">
+            <a href="{% url 'ordersapp:for_delivery' object.pk %}" class="btn btn-outline-info mb-3">
                 На доставку
             </a>
         {% endif %}
     {% endif %}
 </div>
 <div class="container">
-    <a href="{% url 'ordersapp:order_update' object.pk %}" class="btn btn-outline-primary mb-3">Редактировать</a>
+    <a href="{% url 'ordersapp:order_update' object.pk %}" class="btn btn-outline-primary mb-3 {% if object.shipped %} disabled {%endif%}">Редактировать</a>
     <a href="{% url 'ordersapp:order_delete' object.pk %}" class="btn btn-outline-danger mb-3 {% if object.shipped %} disabled {%endif%}">Удалить</a>
 </div>
 

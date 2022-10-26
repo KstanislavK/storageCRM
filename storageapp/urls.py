@@ -1,7 +1,8 @@
 from django.urls import path
 
 from .views import product_list, ProductDetailView, ProductByCategoryListView, ProductCreateView, ProductUpdateView, \
-    product_active, NomenCreateView, NomenUpdateView, NomenDetailView, roll_to_retail
+    product_active, NomenCreateView, NomenUpdateView, NomenDetailView, roll_to_retail, TkCreateView, BatchCreateView, \
+    CategoryCreateView
 
 app_name = 'storageapp'
 
@@ -19,4 +20,8 @@ urlpatterns = [
     path('nomen/update/<slug:slug>', NomenUpdateView.as_view(), name='nomen_update'),
 
     path('category/<slug:slug>', ProductByCategoryListView.as_view(), name='by_category'),
+
+    path('tk_create/', TkCreateView.as_view(), name='tk_create'),
+    path('batch_create/', BatchCreateView.as_view(), name='batch_create'),
+    path('category_create/', CategoryCreateView.as_view(), name='category_create'),
 ]

@@ -29,7 +29,7 @@ class CategoryList(models.Model):
         return reverse('storageapp:category_update', kwargs={'slug': self.slug})
 
     def get_products_amount_by_category(self):
-        dict_1 = ProductList.objects.filter(name__category=self.pk, is_active=True).aggregate(Sum('amount'))
+        dict_1 = ProductList.objects.filter(name__category=self.pk, is_active=True, is_retail=False).aggregate(Sum('amount'))
         for key in dict_1:
             if dict_1[key] is None:
                 return 0
@@ -167,7 +167,7 @@ class ProductList(models.Model):
     def get_absolute_url(self):
         if self.is_retail:
             return reverse('storageapp:product_update', kwargs={'slug': self.slug})
-        return reverse('storageapp:product_update', kwargs={'slug': self.slug})
+        return reverse('storageapp:product_detail', kwargs={'slug': self.slug})
 
     def get_product_sum(self):
         dict_1 = ProductList.objects.filter(name=self.name, is_active=True, is_retail=False).aggregate(Sum('amount'))
