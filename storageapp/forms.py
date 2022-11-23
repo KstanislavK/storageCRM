@@ -13,3 +13,7 @@ class NomenForm(forms.ModelForm):
     class Meta:
         model = NomenList
         exclude = ('slug', 'is_active')
+
+
+class SearchForm(forms.Form):
+    pass

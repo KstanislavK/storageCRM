@@ -46,6 +46,7 @@ ADDED_APPS = [
     'mainapp',
     'partnersapp',
     'storageapp',
+    'ordersapp',
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + ADDED_APPS
