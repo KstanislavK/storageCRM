@@ -23,7 +23,7 @@
         {% for item in partners_objects %}
         <tr>
             <th scope="row">{{ item.pk }}</th>
-            <td><a href="{% url 'partnersapp:update' item.pk %}" class="link-dark">{{ item.name }}</a></td>
+            <td><a href="{% url 'partnersapp:update' item.slug %}" class="link-dark">{{ item.name }}</a></td>
             <td>{{ item.partner_city }}</td>
             <td>{{ item.contact_phone }}</td>
             <td>{{ item.contact_person }}</td>

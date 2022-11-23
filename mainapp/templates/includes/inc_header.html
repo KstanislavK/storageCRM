@@ -2,12 +2,8 @@
 
 <nav class="navbar">
     <div class="container d-flex justify-content-between">
-        <a href="{% url 'mainapp:index' %}">Главная</a>
-        <div>
-            Hello, {{ user.first_name }} |
-            {% if user.is_authenticated %}
-                <a href="{% url 'logout' %}">Выйти</a>
-            {% endif %}
+        <div id="weather">
+            <p>В Москве:<img src="{{ icon }}" alt="">{{ temp }}&deg;С, {{ conditions }}</p>
         </div>
     </div>
 </nav>

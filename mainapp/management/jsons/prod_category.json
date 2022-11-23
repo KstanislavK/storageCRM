@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Архитектурные",
+    "description": "",
+    "slug": "arhitekturnye"
+  },
+  {
+    "name": "Автомобильные",
+    "description": "",
+    "slug": "avtomobilnye"
+  },
+  {
+    "name": "Декоративные",
+    "description": "",
+    "slug": "dekorativnye"
+  },
+  {
+    "name": "Защитные",
+    "description": "",
+    "slug": "zashitnye"
+  }
+]

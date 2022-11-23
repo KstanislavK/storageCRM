@@ -1,0 +1,53 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="container d-flex justify-content-between">
+    <div>
+        <h3>{{title}}</h3>
+    </div>
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <a href="{% url 'storageapp:nomen_create' %}" class="btn btn-outline-dark">
+            <i class="bi bi-plus-lg"></i> Добавить Номен
+        </a>
+        <a href="{% url 'storageapp:product_create' %}" class="btn btn-outline-dark">
+            <i class="bi bi-plus-lg"></i>  Добавить Товар
+        </a>
+    </div>
+</div>
+<div class="container">
+    <a href="{% url 'storageapp:index' %}" class="link-dark">Все({{ products_count }})</a>
+    {% for item in category_links %}
+        <a href="{% url 'storageapp:by_category' item.slug %}" class="link-dark">
+            {{item.name}}({{ item.get_products_amount_by_category}})
+        </a>
+    {% endfor %}
+</div>
+
+<div class="container">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Название</th>
+            <th scope="col">Количество</th>
+            <th scope="col">Артикул</th>
+            <th scope="col">Категория</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in objects %}
+        <tr>
+            <th scope="row">
+                <a href="{% url 'storageapp:nomen_detail' item.slug %}" class="link-dark">{{ item.name }}</a>
+            </th>
+            <td>{{ item.get_quantity }}</td>
+            <td>{{ item.part_number }}</td>
+            <td>{{ item.category }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div>
+    </div>
+</div>
+{% endblock %}
