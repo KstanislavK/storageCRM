@@ -2,10 +2,18 @@
 {% load static %}
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
+{% if user.is_superuser %}
+<a href="{% url 'mainapp:backup' %}" class="btn btn-outline-dark">
+    Backup
+</a>
+{% endif %}
 <div class="container-fluid" id="todolist">
     <h4>Последние задачи</h4>
 </div>
-<div class="container-fluid d-flex flex-wrap justify-content-center">
+<div class="container-fluid">
     {% include 'todoapp/includes/inc_todo_card.html' %}
-{% endblock %}
 </div>
+<div class="container-fluid">
+    {% include 'includes/inc_active_orders.html' %}
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block title %}{{title}}{% endblock %}
+
+{% block content%}
+<div class="container d-flex justify-content-between" style="padding-top: 10px;">
+    <div>
+        <h3>{{title}}</h3>
+    </div>
+    <div>
+    <a href="{% url 'transportapp:mileage_create' %}" class="btn btn-outline-dark mb-3">
+        <i class="bi bi-plus-lg"></i> Запись
+    </a>
+    </div>
+</div>
+{% if cars %}
+<div class="container">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Название</th>
+            <th>Гос номер</th>
+            <th>Пробег ОДО</th>
+            <th>Пробег ДОК</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for car in cars %}
+        <tr>
+            <td>{{car.name}}</td>
+            <td>{{car.gis_num}}</td>
+            <td>{{car.km_real}}</td>
+            <td>{{car.km_docs}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% if objects %}
+<div class="container">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Авто</th>
+                <th>Пробег за день</th>
+                <th>Пробег по докам</th>
+                <th>Расход за день</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for object in objects %}
+        <tr>
+            <td>
+                <a href="{% url 'transportapp:mileage_update' object.pk %}" class="link-dark">{{object.created_at}}</a>
+            </td>
+            <td>{{object.car}}</td>
+            <td>{{object.km_amount}}</td>
+            <td>{{object.km_docs}}</td>
+            <td>{{object.consumption}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div>
+    <nav aria-label="Navigation">
+        <ul class="pagination">
+            {% if objects.has_previous %}
+                <li class="page-item">
+                    <a href="?page=1" class="page-link link-dark">Первая</a>
+                </li>
+                <li>
+                    <a href="?page={{ objects.previous_page_number }}" class="page-link link-dark">&laquo;</a>
+                </li>
+            {% endif %}
+
+            {% for page in objects.paginator.page_range %}
+                {% if objects.number == page %}
+                    <li class="page-item active"><a class="page-link link-dark">{{page}}</a></li>
+                {% else %}
+                    <li class="page-item">
+                        <a href="?page={{page}}" class="page-link link-dark">{{page}}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if objects.has_next %}
+                <li class="page-item">
+                    <a href="?page={{ objects.paginator.next_page_number }}" class="page-link link-dark">&raquo;</a>
+                </li>
+                <li>
+                    <a href="?page={{ objects.paginator.num_pages }}" class="page-link link-dark">Последняя</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{%else%}
+<div class="container"><h4>Нет данных</h4></div>
+{%endif%}
+<div style="padding-bottom: 30px;"></div>
+{% endblock %}

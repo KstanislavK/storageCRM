@@ -1,0 +1,42 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block title %}
+    Отгрузка {{ order.partner.name }}
+{% endblock %}
+{% block content %}
+
+<div class="container">
+    <a href="#{% url 'storageapp:index' %}" class="link-dark"><i class="bi bi-arrow-left"></i>К накладным</a>
+    <h5>Номер заказа: {{ order.pk }}</h5>
+    <h6>Заказчик: {{ order.partner.name }}</h6>
+    <p><b>ТК / Адресс:</b>
+        {% if order.tk%}{{ order.tk.name }}
+        {% elif order.self_pickup%}Самовывоз
+        {% elif order.partner.address%}{{ order.partner.address }}
+        {%endif%}
+    </p>
+
+    <table class="table">
+        <tr>
+            <th>Товар</th>
+            <th>Количество</th>
+            <th>Партия</th>
+        </tr>
+        {% for item in objects %}
+            <tr>
+                <td>{{item.product.name}}</td>
+                <td>{{item.amount}}</td>
+                <td>
+                    <select aria-label="Партия">
+                        {% for product in item.get_batches_by_product %}
+                        <option>{{ product }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <input type="submit" value="Сохранить">
+    <input type="submit" value="Отгрузить">
+</div>
+{% endblock %}

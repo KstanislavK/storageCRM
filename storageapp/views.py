@@ -1,25 +1,20 @@
+from datetime import date
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Sum, Count, Max
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 
-from .forms import ProductForm, NomenForm, SearchForm
-from .models import ProductList, CategoryList, NomenList
+from ordersapp.models import OrderList, OrderProductsList, TKList
+from partnersapp.models import PartnersList
+from .forms import ProductForm, NomenForm, SearchForm, TkCreateViewForm, BatchCreateViewForm, CategoryCreateViewForm
+from .models import ProductList, CategoryList, NomenList, BatchList
 
 
-# class ProductListView(ListView):
-#     model = NomenList
-#     template_name = 'storageapp/index.html'
-#     context_object_name = 'objects'
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(ProductListView, self).get_context_data(**kwargs)
-#         context['title'] = 'Товары'
-#         context['category_links'] = CategoryList.objects.all()
-#         context['products_count'] = ProductList.get_all_products_amount(self)
-#         return context
-
-
+@login_required
 def product_list(request):
     objects = NomenList.objects.all()
     if request.method == 'POST':
@@ -31,6 +26,7 @@ def product_list(request):
 
             if data_for_search.isdigit():
                 search_results = list(NomenList.objects.filter(pk=int(data_for_search)))
+
             search_results = set(list(NomenList.objects.filter(part_number__contains=data_for_search)) + \
                                  list(NomenList.objects.filter(name__contains=data_for_search)) + \
                                  search_results)
@@ -40,6 +36,7 @@ def product_list(request):
                 'objects': search_results,
                 'category_links': CategoryList.objects.all(),
                 'products_count': ProductList.get_all_products_amount(),
+                'dfs': data_for_search,
             }
             return render(request, 'storageapp/index.html', context)
 
@@ -53,7 +50,7 @@ def product_list(request):
     return render(request, 'storageapp/index.html', context)
 
 
-class ProductByCategoryListView(ListView):
+class ProductByCategoryListView(LoginRequiredMixin, ListView):
     model = NomenList
     template_name = 'storageapp/index.html'
     context_object_name = 'objects'
@@ -73,7 +70,7 @@ class ProductByCategoryListView(ListView):
         return context
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(LoginRequiredMixin, DetailView):
     model = ProductList
     template_name = 'storageapp/product_detail.html'
     context_object_name = 'object'
@@ -82,7 +79,7 @@ class ProductDetailView(DetailView):
         return ProductList.objects.filter(is_active=True)
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     model = ProductList
     template_name = 'storageapp/product_create_form.html'
     context_object_name = 'product_objects'
@@ -93,12 +90,28 @@ class ProductCreateView(CreateView):
         context['title'] = 'Добавить товар'
         return context
 
+    def form_valid(self, form):
+        nomen = NomenList.objects.get(pk=self.kwargs['pk'])
+        self.object = form.save(commit=False)
+        self.object.name = nomen
+        self.object.save()
 
-class ProductUpdateView(UpdateView):
+        return HttpResponseRedirect(
+            reverse(
+                'storageapp:nomen_detail',
+                kwargs={'slug': nomen.slug}))
+
+
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = ProductList
     form_class = ProductForm
     template_name = 'storageapp/product_crud_form.html'
     success_url = reverse_lazy('storageapp:index')
+
+    def get_success_url(self):
+        product_slug = self.kwargs['slug']
+        nomen = NomenList.objects.get(product__slug=product_slug)
+        return reverse('storageapp:nomen_detail', kwargs={'slug': nomen.slug})
 
     def get_context_data(self, **kwargs):
         context = super(ProductUpdateView, self).get_context_data(**kwargs)
@@ -107,6 +120,7 @@ class ProductUpdateView(UpdateView):
         return context
 
 
+@login_required
 def product_active(request, slug):
     product = get_object_or_404(ProductList, slug=slug)
     prod_slug = NomenList.objects.get(product__slug=slug).slug
@@ -122,7 +136,33 @@ def product_active(request, slug):
         return HttpResponseRedirect(reverse('storageapp:nomen_detail', kwargs={'slug': prod_slug}))
 
 
-class NomenCreateView(CreateView):
+@login_required
+def roll_to_retail(request, slug):
+    product = get_object_or_404(ProductList, slug=slug)
+    prod_slug = NomenList.objects.get(product__slug=slug).slug
+
+    if request.method == 'GET':
+        product.amount = product.amount - 1
+        product.save()
+
+        new_ret = ProductList(
+            name=product.name,
+            batch=product.batch,
+            is_active=True,
+            is_retail=True,
+            amount=NomenList.objects.get(product__slug=slug).meters
+            )
+
+        new_ret.save()
+
+        return HttpResponseRedirect(
+            reverse(
+                'storageapp:nomen_detail',
+                kwargs={
+                    'slug': prod_slug}))
+
+
+class NomenCreateView(LoginRequiredMixin, CreateView):
     model = NomenList
     template_name = 'storageapp/product_create_form.html'
     context_object_name = 'nomen_objects'
@@ -134,7 +174,7 @@ class NomenCreateView(CreateView):
         return context
 
 
-class NomenUpdateView(UpdateView):
+class NomenUpdateView(LoginRequiredMixin, UpdateView):
     model = NomenList
     form_class = NomenForm
     template_name = 'storageapp/product_crud_form.html'
@@ -147,7 +187,51 @@ class NomenUpdateView(UpdateView):
         return context
 
 
-class NomenDetailView(DetailView):
+class NomenDetailView(LoginRequiredMixin, DetailView):
     model = NomenList
     template_name = 'storageapp/nomen_detail.html'
     context_object_name = 'object'
+
+    def get_context_data(self, **kwargs):
+        context = super(NomenDetailView, self).get_context_data(**kwargs)
+        context['retail'] = ProductList.objects.filter(name=self.object, is_retail=True, is_active=True)
+        return context
+
+
+class TkCreateView(LoginRequiredMixin, CreateView):
+    model = TKList
+    template_name = 'storageapp/product_crud_form.html'
+    context_object_name = 'nomen_objects'
+    form_class = TkCreateViewForm
+    success_url = reverse_lazy('storageapp:index')
+
+    def get_context_data(self, **kwargs):
+        context = super(TkCreateView, self).get_context_data(**kwargs)
+        context['title'] = 'Добавить Транспортную'
+        return context
+
+
+class BatchCreateView(LoginRequiredMixin, CreateView):
+    model = BatchList
+    template_name = 'storageapp/product_crud_form.html'
+    context_object_name = 'nomen_objects'
+    form_class = BatchCreateViewForm
+    success_url = reverse_lazy('storageapp:index')
+
+    def get_context_data(self, **kwargs):
+        context = super(BatchCreateView, self).get_context_data(**kwargs)
+        context['title'] = 'Добавить партию'
+        return context
+
+
+class CategoryCreateView(LoginRequiredMixin, CreateView):
+    model = CategoryList
+    template_name = 'storageapp/product_crud_form.html'
+    context_object_name = 'nomen_objects'
+    form_class = CategoryCreateViewForm
+    success_url = reverse_lazy('storageapp:index')
+
+    def get_context_data(self, **kwargs):
+        context = super(CategoryCreateView, self).get_context_data(**kwargs)
+        context['title'] = 'Добавить категорию'
+        return context

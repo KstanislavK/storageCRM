@@ -1,5 +1,6 @@
 {% extends 'layout/base.html' %}
 {% load static %}
+{% block title %} {{ title }} {{ obj.name }}{% endblock %}
 {% block content %}
 <div class="container" style="max-width: 600px">
     <a href="javascript: history.go(-1)" class="link-dark"><i class="bi bi-arrow-left"></i>Назад</a>
@@ -9,27 +10,21 @@
         <div class="card-body">
             <form action="" class="form-horizontal" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-
-                <p>
-                    Название: {{ form.name }} Город: {{ form.partner_city }}
+                <p>Наименование: {{ object.product }}</p>
+                <p>Количество:
+                    <input type="text" value="{{ object.amount }}" name="amount">
                 </p>
-                <hr>
-                <h6>Дополнительная информация</h6>
-                <div>
-                    <p>
-                        Адрес: {{ form.address }}
-                    </p>
-                    <p>
-                        Контактное лицо: {{ form.contact_person }}
-                    </p>
-                    <p>
-                        Контактный телефон: {{ form.contact_phone }}
-                    </p>
-                    <p>
-                        Контактный e-mail: {{ form.contact_email }}
-                    </p>
-                </div>
-                <hr>
+                <p>
+                    <select aria-label="Партия" id="batch" name="batch" value="{{object.batch}}">
+                        {% for obj in object.get_batches_by_product %}
+                        <option value="{{obj}}" {%if object.batch == obj.batch %}selected {%endif%}>{{obj}}</option>
+                        {% endfor %}
+                    </select>
+                </p>
+                <p><label for="is_retail">Нарезка</label>
+                    <input type="checkbox" name="is_retail" id="is_retail" {% if object.is_retail %} checked {% endif %}>
+                </p>
+
                 <div class="container d-flex justify-content-around">
                     <div>
                         <input type="submit" class="form-control btn btn-outline-dark" value="Сохранить">

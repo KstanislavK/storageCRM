@@ -1,11 +1,9 @@
 {% extends 'layout/base.html' %}
 {% load static %}
-{% block title %} {{title}} {{obj.name}} {%endblock%}
 {% block content %}
-<div class="container" style="max-width: 600px">
-    <a href="javascript: history.go(-1)" class="link-dark"><i class="bi bi-arrow-left"></i>Назад</a>
-    <div class="card mb-4">
-        <div class="card-header">{{ title }} <strong>"{{obj.name}}"</strong>
+<div class="container" style="padding-top: 20px; margin: 0 auto;">
+    <div class="card mb-4" style="max-width: 300px; margin: 0 auto;">
+        <div class="card-header">{{ title }}
         </div>
         <div class="card-body">
             <form action="" class="form-horizontal" method="post" enctype="multipart/form-data">

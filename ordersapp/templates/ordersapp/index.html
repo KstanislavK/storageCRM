@@ -2,23 +2,25 @@
 {% load static %}
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
-<div class="container d-flex justify-content-between">
+<br>
+<div class="container">
     <div>
         <h3>{{title}}</h3>
     </div>
-
 </div>
-<div class="container d-flex justify-content-between">
+<div class="d-flex justify-content-between">
     <div>
         <a href="{% url 'ordersapp:index' %}" class="btn btn-outline-dark mb-3">Все</a>
         <a href="{% url 'ordersapp:active_orders' %}" class="btn btn-outline-success mb-3">Активные</a>
+        <a href="{% url 'ordersapp:statistics' %}" class="btn btn-outline-primary mb-3">Статистики</a>
     </div>
     <div class="col-6">
         <form action="/orders/" method="post" class="col-auto mb-3">
             {% csrf_token %}
             <div class="input-group mb-3">
                 <input type="text" class="form-control"
-                       placeholder="Введите номер заказа" name="data_for_search">
+                       {%if dfs%} value="{{dfs}}" {%endif%}
+                       placeholder="Введите номер заказа, контрагента, адрес" name="data_for_search">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="submit" value="OK">Поиск</button>
                 </div>
@@ -36,13 +38,13 @@
     <tr>
         <th>Номер</th>
         <th>Покупатель</th>
-        <th>Товар/Количество</th>
+        <th>Товар: Количество</th>
         <th>ТК/Адрес</th>
         <th>Статус</th>
     </tr>
     </thead>
     <tbody>
-        {% for item in objects %}
+        {% for item in page_obj %}
         <tr>
             <td>
                 <a href="{% url 'ordersapp:order_detail' item.pk%}" class="link-dark">
@@ -53,14 +55,24 @@
             <td>
                 <a href="{% url 'ordersapp:order_detail' item.pk%}" class="link-dark">
                     {{ item.partner.partner_city }}, {{ item.partner.name }}
-                </a>
+                </a><br>
+                {% if item.shipped %}
+                    <span style="font-size: 12px;">Отгружен {{ item.shipped_date|date:"d.m.Y" }}</span>
+                {% endif %}
             </td>
             <td>
                 <table>
                     {% for good in item.get_order_products_list %}
                     <tr>
                         <td>{{ good.product.name }}:</td>
-                        <td style="text-align:center;width: 30%">{{ good.amount }}</td>
+                        <td style="text-align:center;width: 30%">
+                            {% if good.is_retail %}
+                                {{ good.amount }} м.п.
+                            {% else %}
+                                {{ good.amount|floatformat:0 }} шт.
+                            {% endif %}
+                        </td>
+
                     </tr>
                     {% endfor %}
                 </table>
@@ -97,6 +109,36 @@
         {% endfor %}
     </tbody>
 </table>
+
+<nav aria-label="Navigation">
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a href="?page=1" class="page-link link-dark">Первая</a>
+            </li>
+            <li>
+                <a href="?page={{ page_obj.previous_page_number }}" class="page-link link-dark">&laquo;</a>
+            </li>
+        {% endif %}
+
+        {% for page in page_obj.paginator.page_range %}
+            <li class="page-item">
+                <a href="?page={{page}}" class="page-link link-dark">{{page}}</a>
+            </li>
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a href="?page={{ page_obj.next_page_number }}" class="page-link link-dark">&raquo;</a>
+            </li>
+            <li>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link link-dark">Последняя</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+
+<br><br><br>
 <div class="container">
 </div>
 {% endblock %}
