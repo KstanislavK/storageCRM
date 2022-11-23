@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
@@ -6,7 +8,7 @@ from django.views.generic import ListView, CreateView, UpdateView
 from .models import ToDoList
 
 
-class TodoListView(ListView):
+class TodoListView(LoginRequiredMixin, ListView):
     model = ToDoList
     template_name = 'todoapp/index.html'
     context_object_name = 'todo_objects'
@@ -20,11 +22,11 @@ class TodoListView(ListView):
         return context
 
 
-class TodoCreateView(CreateView):
+class TodoCreateView(LoginRequiredMixin, CreateView):
     model = ToDoList
     template_name = 'todoapp/todo_crud_form.html'
     context_object_name = 'todo_objects'
-    fields = ['user_posted', 'title', 'text']
+    fields = ['title', 'text']
 
     def get_context_data(self,  **kwargs):
         context = super(TodoCreateView, self).get_context_data(**kwargs)
@@ -32,7 +34,7 @@ class TodoCreateView(CreateView):
         return context
 
 
-class TodoUpdateView(UpdateView):
+class TodoUpdateView(LoginRequiredMixin, UpdateView):
     model = ToDoList
     template_name = 'todoapp/todo_crud_form.html'
     success_url = reverse_lazy('todoapp:index')
@@ -44,6 +46,7 @@ class TodoUpdateView(UpdateView):
         return context
 
 
+@login_required
 def todo_complete(request, slug):
     task = get_object_or_404(ToDoList, slug=slug)
 
@@ -58,6 +61,7 @@ def todo_complete(request, slug):
         return HttpResponseRedirect(reverse('todoapp:index'))
 
 
+@login_required
 def todo_delete(request, slug):
     task = get_object_or_404(ToDoList, slug=slug)
     task.delete()

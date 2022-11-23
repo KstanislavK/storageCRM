@@ -1,12 +1,8 @@
 {% load static %}
 
-
 <nav class="navbar">
     <div class="container d-flex justify-content-between">
-        <div class="exchange">
-            <p>Курс доллара: <strong>{{ value_now }}</strong>; Прошлый: <strong>{{ value_prev }}</strong></p>
-        </div>
-        <div class="weather">
+        <div id="weather">
             <p>В Москве:<img src="{{ icon }}" alt="">{{ temp }}&deg;С, {{ conditions }}</p>
         </div>
     </div>

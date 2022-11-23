@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from slugify import slugify
@@ -5,7 +6,7 @@ from slugify import slugify
 
 class ToDoList(models.Model):
     date = models.DateTimeField(verbose_name='Дата', auto_now=True)
-    user_posted = models.CharField(verbose_name='Пользователь', max_length=64, default='admin')
+    user_posted = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(verbose_name='Заголовок', max_length=128)
     text = models.TextField(verbose_name='Текст', max_length=512)
     is_active = models.BooleanField(verbose_name='Активное', default=True)
