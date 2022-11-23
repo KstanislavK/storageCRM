@@ -1,9 +1,9 @@
 {% load static %}
 {% for object in todo_objects %}
-<div class="card" style="width: 18rem;">
+<div class="card shadow rounded" style="width: 18rem; margin: 10px;">
     <div class="card-body">
         <h5 class="card-title">
-            <a href="{% url 'todoapp:update' object.pk %}" class="card-link"
+            <a href="{% url 'todoapp:update' object.pk %}" class="card-link link-dark"
                style="{% if not object.is_active %}opacity: .5; text-decoration: line-through; {% endif %}">
                {{ object.title }}
             </a>
@@ -16,11 +16,11 @@
             {{ object.text }}
         </p>
         {% if object.is_active %}
-        <a href="{% url 'todoapp:complete' object.pk %}" class="card-link">Завершить</a>
+        <a href="{% url 'todoapp:complete' object.pk %}" class="card-link link-dark">Завершить</a>
         {% else %}
-        <a href="{% url 'todoapp:complete' object.pk %}" class="card-link">Восстановить</a>
+        <a href="{% url 'todoapp:complete' object.pk %}" class="card-link link-dark">Восстановить</a>
         {% endif %}
-        <a href="{% url 'todoapp:delete' object.pk %}" class="card-link">Удалить</a>
+        <a href="{% url 'todoapp:delete' object.pk %}" class="card-link link-dark">Удалить</a>
     </div>
 </div>
 {% endfor %}

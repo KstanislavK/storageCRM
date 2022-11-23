@@ -2,11 +2,10 @@
 {% load static %}
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
-<div class="container" id="todolist">
+<div class="container-fluid" id="todolist">
     <h4>Последние задачи</h4>
-    <a href="{% url 'todoapp:index' %}">Перейти в раздел</a>
 </div>
-<div class="container d-flex flex-wrap justify-content-center">
+<div class="container-fluid d-flex flex-wrap justify-content-center">
     {% include 'todoapp/includes/inc_todo_card.html' %}
 {% endblock %}
 </div>

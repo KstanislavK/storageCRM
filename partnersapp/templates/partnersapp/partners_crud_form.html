@@ -1,0 +1,24 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="card mb-4">
+        <div class="card-header">{{ title }} <strong>"{{obj.name}}"</strong>
+        </div>
+        <div class="card-body">
+            <form action="" class="form-horizontal" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="container d-flex justify-content-around">
+                    <div>
+                        <input type="submit" class="form-control btn btn-outline-dark" value="Сохранить">
+                    </div>
+                    <div>
+                        <a href="{% url 'partnersapp:active' obj.pk %}" class="form-control btn-dark">Удалить</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
