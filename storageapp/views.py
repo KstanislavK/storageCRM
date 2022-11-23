@@ -8,8 +8,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 
-from ordersapp.models import OrderList, OrderProductsList, TKList
-from partnersapp.models import PartnersList
+from ordersapp.models import TKList
 from .forms import ProductForm, NomenForm, SearchForm, TkCreateViewForm, BatchCreateViewForm, CategoryCreateViewForm
 from .models import ProductList, CategoryList, NomenList, BatchList
 

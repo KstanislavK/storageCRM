@@ -47,18 +47,20 @@
                 <th>Пробег за день</th>
                 <th>Пробег по докам</th>
                 <th>Расход за день</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
         {% for object in objects %}
         <tr>
-            <td>
-                <a href="{% url 'transportapp:mileage_update' object.pk %}" class="link-dark">{{object.created_at}}</a>
-            </td>
+            <td>{{object.created_at}}</td>
             <td>{{object.car}}</td>
             <td>{{object.km_amount}}</td>
             <td>{{object.km_docs}}</td>
             <td>{{object.consumption}}</td>
+            <td>
+                <a href="{% url 'transportapp:mileage_delete' object.pk %}" class="ling-danger">Удалить</a>
+            </td>
         </tr>
         {% endfor %}
         </tbody>

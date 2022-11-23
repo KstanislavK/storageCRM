@@ -118,12 +118,16 @@ class MileageCreateView(LoginRequiredMixin, CreateView):
         return HttpResponseRedirect(reverse('transportapp:mileage_list'))
 
 
-class MileageUpdateView(LoginRequiredMixin, UpdateView):
-    model = MileageList
-    template_name = 'transportapp/ride_crud_form.html'
-    form_class = NewMileageForm
+def delete_mileage(request, pk):
+    post = get_object_or_404(MileageList, pk=pk)
+    car = post.car
 
-    def get_context_data(self, **kwargs):
-        context = super(MileageUpdateView, self).get_context_data(**kwargs)
-        context['title'] = 'Изменение записи пробеги'
-        return context
+    car.km_docs = car.km_docs - post.km_docs
+    car.km_real = post.km_start
+
+    car.save()
+    post.delete()
+
+    return HttpResponseRedirect(reverse('transportapp:mileage_list'))
+
+
