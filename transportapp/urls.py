@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views import get_ride_list, RideActiveListView, RideCreateView, set_delivered, ride_delete, MileageListView, \
-    MileageCreateView, MileageUpdateView
+    MileageCreateView, delete_mileage
 
 app_name = 'transportapp'
 
@@ -14,5 +14,5 @@ urlpatterns = [
 
     path('mileage/', MileageListView.as_view(), name='mileage_list'),
     path('mileage/create/', MileageCreateView.as_view(), name='mileage_create'),
-    path('mileage/update/<int:pk>', MileageUpdateView.as_view(), name='mileage_update'),
+    path('mileage/delete/<int:pk>', delete_mileage, name='mileage_delete'),
 ]

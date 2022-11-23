@@ -1,5 +1,4 @@
 from django.db import models
-from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
 from ordersapp.models import OrderList
@@ -48,7 +47,7 @@ class CarList(models.Model):
 
 
 class MileageList(models.Model):
-    created_at = models.DateTimeField(verbose_name='Дата', auto_now_add=True)
+    created_at = models.DateTimeField(verbose_name='Дата')
     car = models.ForeignKey(CarList, verbose_name='Машина', on_delete=models.PROTECT)
     km_start = models.PositiveIntegerField(verbose_name='Пробег (Начало)')
     km_end = models.PositiveIntegerField(verbose_name='Пробег (Конец)')

@@ -20,8 +20,12 @@ class NewMileageForm(forms.ModelForm):
     class Meta:
         model = MileageList
         exclude = ('km_start', 'consumption', 'km_amount')
+        widgets = {
+            'created_at': forms.DateInput(attrs={'type': 'date'}, format='%d.%m.%Y')
+        }
 
     def __init__(self, *args, **kwargs):
         super(NewMileageForm, self).__init__(*args, **kwargs)
+
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
