@@ -1,0 +1,32 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block title %}{{ object.name }} :: Редактирование{% endblock %}
+{% block content %}
+
+<div class="container">
+    <a href="{% url 'storageapp:index' %}" class="link-dark"><i class="bi bi-arrow-left"></i>К товарам</a>
+    <h2>{{ title }} {{ object.name }}</h2>
+    <p>Артикул: {{ object.part_number }}</p>
+    <p>Категория: {{ object.category }}</p>
+    <p>Количество: <strong>{{object.get_product_sum }}</strong></p>
+    <p>Доступные партии:</p>
+    <div style="max-width: 40%;">
+        <table class="table table-sm" style="text-align: center;">
+            <tr>
+                <th>Партия</th>
+                <th>Количество</th>
+                <th colspan="2">Действия</th>
+            </tr>
+            {% for item in object.get_prod_batches %}
+            <tr>
+                <td>{{ item.batch }}</td>
+                <td>{{ item.amount }}</td>
+                <td><a href="{% url 'storageapp:product_update' item.slug %}" class="link-dark">Изменить</a></td>
+                <td><a href="{% url 'storageapp:active' item.slug %}" class="link-dark">Удалить</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <p>Описание: {{object.description}}</p>
+</div>
+{% endblock %}

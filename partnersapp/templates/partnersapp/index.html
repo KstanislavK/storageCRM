@@ -1,0 +1,45 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="container d-flex justify-content-between">
+    <div><h3>{{title}}</h3></div>
+    <div>
+        <a href="{% url 'partnersapp:create' %}" class="btn btn-outline-dark">
+            <i class="bi bi-plus-lg"></i> Добавить
+        </a>
+    </div>
+</div>
+<div class="container">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Город</th>
+            <th scope="col">Название</th>
+            <th scope="col">Телефон</th>
+            <th scope="col">Контакт</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in partners_objects %}
+        <tr>
+            <th scope="row">{{ item.pk }}</th>
+            <td>{{ item.partner_city }}</td>
+            <td><a href="{% url 'partnersapp:update' item.slug %}" class="link-dark">{{ item.name }}</a></td>
+            <td>
+                {% if item.contact_phone != None %}
+                    {{ item.contact_phone }}
+                {% endif %}
+            </td>
+            <td>
+                {% if item.contact_person != None %}
+                    {{ item.contact_person }}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

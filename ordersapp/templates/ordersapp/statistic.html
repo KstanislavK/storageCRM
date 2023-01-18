@@ -1,0 +1,79 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block title %}
+
+{% if date_from != None %}
+Статистика {{partner.name}} с {{date_from}} по {{date_to}}
+{% else %}
+Статистика
+{% endif %}
+
+{% endblock %}
+{% block content %}
+<div class="container" style="padding-top: 10px;">
+    <h4>
+        Статистика продаж
+    </h4>
+    <div class="col-12">
+        <form action="" method="post" class="col-auto">
+            {% csrf_token %}
+            <div class="input-group">
+                <input type="date" class="form-control"
+                       value="{% if date_from%}{{date_from}}{%endif%}"
+                       name="date_from">
+                <input type="date" class="form-control"
+                       value="{% if date_to%}{{date_to}}{%endif%}"
+                       name="date_to">
+                <select class="form-control" id="client_list" name="client_list" value="{{ client_list }}">
+                    <option></option>
+                    {% for client in clients %}
+                        <option value="{{ client }}" {% if partner == client %}selected{% endif %}>{{ client }}</option>
+                    {% endfor %}
+                </select>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" value="OK">Поиск</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% if objects %}
+<div class="container" style="padding-top: 10px">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Продано</th>
+                <th>На складе</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item, amount in objects.items %}
+                <tr>
+                    <td>{{item}}</td>
+                    {% for num in amount %}
+                        <td>{{num}}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+        <thead>
+            <tr>
+                <th>Всего</th>
+                <th>{{total_sold}}</th>
+                <th></th>
+            </tr>
+        </thead>
+    </table>
+</div>
+{%else%}
+<div class="container" style="padding-top: 10px;">
+    <h4>Нет данных</h4>
+    <p>Выберите другой период или другого клиента</p>
+</div>
+{%endif%}
+<div style="padding-top: 30px;">
+    <hr>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container" style="max-width: 600px">
+    <a href="javascript: history.go(-1)" class="link-dark"><i class="bi bi-arrow-left"></i>Назад</a>
+    <div class="card mb-4">
+        <div class="card-header">{{ title }} <strong>"{{obj.name}}"</strong>
+        </div>
+        <div class="card-body">
+            <form action="" class="form-horizontal" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <p>
+                    Название: {{ form.name }} Город: {{ form.partner_city }}
+                </p>
+                <hr>
+                <h6>Дополнительная информация</h6>
+                <div>
+                    <p>
+                        Адрес: {{ form.address }}
+                    </p>
+                    <p>
+                        Контактное лицо: {{ form.contact_person }}
+                    </p>
+                    <p>
+                        Контактный телефон: {{ form.contact_phone }}
+                    </p>
+                    <p>
+                        Контактный e-mail: {{ form.contact_email }}
+                    </p>
+                </div>
+                <hr>
+                <div class="container d-flex justify-content-around">
+                    <div>
+                        <input type="submit" class="form-control btn btn-outline-dark" value="Сохранить">
+                    </div>
+                    <div>
+                        <a href="{% url 'partnersapp:active' obj.slug %}" class="form-control btn-dark">Удалить</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

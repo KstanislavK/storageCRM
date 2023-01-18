@@ -1,0 +1,33 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container" style="max-width: 600px">
+    <a href="javascript: history.go(-1)" class="link-dark"><i class="bi bi-arrow-left"></i>Назад</a>
+    <div class="card mb-4">
+        <div class="card-header">Добавить товар</div>
+        <div class="card-body">
+            <form action="" class="form-horizontal" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <p>
+                    Товар: {{ form.product }}
+                </p>
+                <p>Количество: {{ form.amount }} </p>
+                <p>
+                    Нарезка {{ form.is_retail }} <span style="font-size: 11px;">*Поставить, если отрезаем от рулона*</span>
+                </p>
+                <hr>
+                <h6>Необязательные аргументы</h6>
+                <p>
+                    Партия: {{ form.batch }}
+                </p>
+                <hr>
+                <div class="container d-flex justify-content-around">
+                    <div>
+                        <input type="submit" class="form-control btn btn-outline-dark" value="Сохранить">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

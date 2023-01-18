@@ -1,9 +1,9 @@
 {% load static %}
 
-
 <nav class="navbar">
     <div class="container d-flex justify-content-between">
-        <a href="{% url 'mainapp:index' %}">Главная</a>
-        <a href="#">Exit</a>
+        <div id="weather">
+            <p>В Москве:<img src="{{ icon }}" alt="">{{ temp }}&deg;С, {{ conditions }}</p>
+        </div>
     </div>
 </nav>

@@ -1,0 +1,70 @@
+{% load static %}
+<h4>Активные заказы</h4>
+    <a href="{% url 'ordersapp:index' %}" class="link-dark" style="margin-left: 16px;">
+        <i class="bi bi-arrow-left"></i> Перейти к заказам</a>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Номер</th>
+        <th>Покупатель</th>
+        <th>Товар/Количество</th>
+        <th>ТК/Адрес</th>
+        <th>Статус</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for item in order_objects %}
+        <tr>
+            <td>
+                <a href="{% url 'ordersapp:order_detail' item.pk%}" class="link-dark">
+                    <b>Заказ № {{ item.pk }}</b>
+                </a>
+                <br>{{ item.created_at|date:"d.m.Y" }}
+            </td>
+            <td>
+                <a href="{% url 'ordersapp:order_detail' item.pk%}" class="link-dark">
+                    {{ item.partner.partner_city }}, {{ item.partner.name }}
+                </a>
+            </td>
+            <td>
+                <table>
+                    {% for good in item.get_order_products_list %}
+                    <tr>
+                        <td>{{ good.product.name }}:</td>
+                        <td style="text-align:center;width: 30%">{{ good.amount|floatformat:0  }} шт.</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </td>
+            <td>
+                {%if item.tk%}
+                    <img src="{{item.tk.logo}}" style="height: 20px;"> {{ item.tk }}
+                {%endif%}
+                {%if item.self_pickup%}
+                Самовывоз
+                {%elif item.partner.address%}<i class="bi bi-truck"></i>
+                        {{item.partner.address}} <br>
+                    <a href="https://yandex.ru/maps/?text={{item.partner.address}}" class="link-dark" target="_blank">
+                        Посмотреть на карте <i class="bi bi-box-arrow-up-right"></i>
+                    </a>
+                {%endif%}
+
+            </td>
+            <td>
+                {% if not item.payed and not item.shipped %}
+                    <span class="badge bg-info text-dark">Новый</span>
+                {%endif%}
+                {% if item.payed %}
+                    <span class="badge bg-warning text-dark">Оплачен</span><br>
+                {% endif %}
+                {% if item.shipped %}
+                    <span class="badge bg-success">Отгружен</span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr style="border-bottom:1px solid black">
+            <td colspan="5"><span style="margin-left: 16px;">Комментарий: {{ item.comment}}</span></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
